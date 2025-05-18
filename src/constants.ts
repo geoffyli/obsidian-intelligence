@@ -44,6 +44,7 @@ export type PlusUtmMedium = (typeof PLUS_UTM_MEDIUMS)[keyof typeof PLUS_UTM_MEDI
 
 export enum ChatModels {
   GPT_41 = "gpt-4.1",
+  GPT_4o = "gpt-4o",
   GPT_41_mini = "gpt-4.1-mini",
   GPT_41_nano = "gpt-4.1-nano",
 }
@@ -114,114 +115,18 @@ export enum DEFAULT_OPEN_AREA {
   VIEW = "view",
 }
 
+// src/constants.ts
 export const COMMAND_IDS = {
-  ADD_CUSTOM_PROMPT: "add-custom-prompt",
-  APPLY_ADHOC_PROMPT: "apply-adhoc-prompt",
-  APPLY_CUSTOM_PROMPT: "apply-custom-prompt",
-  CLEAR_LOCAL_COPILOT_INDEX: "clear-local-copilot-index",
-  CLEAR_COPILOT_CACHE: "clear-copilot-cache",
-  COUNT_WORD_AND_TOKENS_SELECTION: "count-word-and-tokens-selection",
-  COUNT_TOTAL_VAULT_TOKENS: "count-total-vault-tokens",
-  DELETE_CUSTOM_PROMPT: "delete-custom-prompt",
-  EDIT_CUSTOM_PROMPT: "edit-custom-prompt",
-  FIND_RELEVANT_NOTES: "find-relevant-notes",
-  FORCE_REINDEX_VAULT_TO_COPILOT_INDEX: "force-reindex-vault-to-copilot-index",
-  GARBAGE_COLLECT_COPILOT_INDEX: "garbage-collect-copilot-index",
-  INDEX_VAULT_TO_COPILOT_INDEX: "index-vault-to-copilot-index",
-  INSPECT_COPILOT_INDEX_BY_NOTE_PATHS: "copilot-inspect-index-by-note-paths",
-  LIST_INDEXED_FILES: "copilot-list-indexed-files",
-  LOAD_COPILOT_CHAT_CONVERSATION: "load-copilot-chat-conversation",
-  OPEN_COPILOT_CHAT_WINDOW: "chat-open-window",
-  REMOVE_FILES_FROM_COPILOT_INDEX: "remove-files-from-copilot-index",
-  SEARCH_ORAMA_DB: "copilot-search-orama-db",
-  TOGGLE_COPILOT_CHAT_WINDOW: "chat-toggle-window",
-} as const;
-
-export const COMMAND_NAMES: Record<CommandId, string> = {
-  [COMMAND_IDS.ADD_CUSTOM_PROMPT]: "Add custom prompt",
-  [COMMAND_IDS.APPLY_ADHOC_PROMPT]: "Apply ad-hoc custom prompt",
-  [COMMAND_IDS.APPLY_CUSTOM_PROMPT]: "Apply custom prompt",
-  [COMMAND_IDS.CLEAR_LOCAL_COPILOT_INDEX]: "Clear local Copilot index",
-  [COMMAND_IDS.CLEAR_COPILOT_CACHE]: "Clear Copilot cache",
-  [COMMAND_IDS.COUNT_TOTAL_VAULT_TOKENS]: "Count total tokens in your vault",
-  [COMMAND_IDS.COUNT_WORD_AND_TOKENS_SELECTION]: "Count words and tokens in selection",
-  [COMMAND_IDS.DELETE_CUSTOM_PROMPT]: "Delete custom prompt",
-  [COMMAND_IDS.EDIT_CUSTOM_PROMPT]: "Edit custom prompt",
-  [COMMAND_IDS.FIND_RELEVANT_NOTES]: "Find relevant notes",
-  [COMMAND_IDS.FORCE_REINDEX_VAULT_TO_COPILOT_INDEX]: "Force reindex vault",
-  [COMMAND_IDS.GARBAGE_COLLECT_COPILOT_INDEX]:
-    "Garbage collect Copilot index (remove files that no longer exist in vault)",
-  [COMMAND_IDS.INDEX_VAULT_TO_COPILOT_INDEX]: "Index (refresh) vault",
-  [COMMAND_IDS.INSPECT_COPILOT_INDEX_BY_NOTE_PATHS]: "Inspect Copilot index by note paths (debug)",
-  [COMMAND_IDS.LIST_INDEXED_FILES]: "List all indexed files (debug)",
-  [COMMAND_IDS.LOAD_COPILOT_CHAT_CONVERSATION]: "Load Copilot chat conversation",
-  [COMMAND_IDS.OPEN_COPILOT_CHAT_WINDOW]: "Open Copilot Chat Window",
-  [COMMAND_IDS.REMOVE_FILES_FROM_COPILOT_INDEX]: "Remove files from Copilot index (debug)",
-  [COMMAND_IDS.SEARCH_ORAMA_DB]: "Search OramaDB (debug)",
-  [COMMAND_IDS.TOGGLE_COPILOT_CHAT_WINDOW]: "Toggle Copilot Chat Window",
+	CHAT_WITH_VAULT: "chat-with-vault-rag",
+	// other command IDs
 };
 
-export type CommandId = (typeof COMMAND_IDS)[keyof typeof COMMAND_IDS];
+export const COMMAND_NAMES: Record<string, string> = {
+	"chat-with-vault-rag": "Chat with your Vault (RAG)",
+	// other command names
+};
 
-// export const DEFAULT_SETTINGS: CopilotSettings = {
-//   userId: uuidv4(),
-//   isPlusUser: false,
-//   plusLicenseKey: "",
-//   openAIApiKey: "",
-//   openAIOrgId: "",
-//   huggingfaceApiKey: "",
-//   cohereApiKey: "",
-//   anthropicApiKey: "",
-//   azureOpenAIApiKey: "",
-//   azureOpenAIApiInstanceName: "",
-//   azureOpenAIApiDeploymentName: "",
-//   azureOpenAIApiVersion: "",
-//   azureOpenAIApiEmbeddingDeploymentName: "",
-//   googleApiKey: "",
-//   openRouterAiApiKey: "",
-//   xaiApiKey: "",
-//   mistralApiKey: "",
-//   deepseekApiKey: "",
-//   defaultChainType: ChainType.LLM_CHAIN,
-//   defaultModelKey: ChatModels.GPT_41 + "|" + ChatModelProviders.OPENAI,
-//   embeddingModelKey: EmbeddingModels.OPENAI_EMBEDDING_SMALL + "|" + EmbeddingModelProviders.OPENAI,
-//   temperature: 0.1,
-//   maxTokens: 1000,
-//   contextTurns: 15,
-//   userSystemPrompt: "",
-//   openAIProxyBaseUrl: "",
-//   openAIEmbeddingProxyBaseUrl: "",
-//   stream: true,
-//   defaultSaveFolder: "copilot-conversations",
-//   defaultConversationTag: "copilot-conversation",
-//   autosaveChat: false,
-//   defaultOpenArea: DEFAULT_OPEN_AREA.VIEW,
-//   customPromptsFolder: "copilot-custom-prompts",
-//   indexVaultToVectorStore: VAULT_VECTOR_STORE_STRATEGY.ON_MODE_SWITCH,
-//   qaExclusions: "",
-//   qaInclusions: "",
-//   chatNoteContextPath: "",
-//   chatNoteContextTags: [],
-//   enableIndexSync: true,
-//   debug: false,
-//   enableEncryption: false,
-//   maxSourceChunks: 3,
-//   groqApiKey: "",
-//   activeModels: BUILTIN_CHAT_MODELS,
-//   activeEmbeddingModels: BUILTIN_EMBEDDING_MODELS,
-//   embeddingRequestsPerMin: 90,
-//   embeddingBatchSize: 16,
-//   disableIndexOnMobile: true,
-//   showSuggestedPrompts: true,
-//   showRelevantNotes: true,
-//   numPartitions: 1,
-//   promptUsageTimestamps: {},
-//   defaultConversationNoteName: "{$topic}@{$date}_{$time}",
-//   inlineEditCommands: DEFAULT_INLINE_EDIT_COMMANDS,
-//   lastDismissedVersion: null,
-//   passMarkdownImages: true,
-//   enableCustomPromptTemplating: true,
-// };
+export type CommandId = keyof typeof COMMAND_IDS;
 
 export const EVENT_NAMES = {
   CHAT_IS_VISIBLE: "chat-is-visible",

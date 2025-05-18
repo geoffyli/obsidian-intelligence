@@ -50,3 +50,5 @@ src/tests
 
 **/.DS_Store
 **/tests/
+
+**.env
