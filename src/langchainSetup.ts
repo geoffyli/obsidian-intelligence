@@ -6,11 +6,22 @@ import { Document } from "langchain/document";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 // Import for the new approach to create a retrieval chain
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-import { createRetrievalChain } from "langchain/chains/retrieval";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { Runnable } from "@langchain/core/runnables"; // For type hint
-import { ObsidianRAGPluginSettings } from "./types";
-import {ChatModels} from "./constants";
+import {
+	ChatPromptTemplate,
+	MessagesPlaceholder,
+} from "@langchain/core/prompts";
+import { Runnable, RunnableSequence } from "@langchain/core/runnables"; // For type hint
+import { ObsidianRAGPluginSettings, LangChainChatMessage } from "./types";
+import {
+	ChatModels,
+	TEMPATURE,
+	DEFAULT_DOC_FETCHED,
+	ANSWER_GENERATION_PROMPT,
+	QUERY_GENERATION_PROMPT,
+} from "./constants";
+import { HumanMessage, AIMessage, BaseMessage } from "@langchain/core/messages";
+import { createHistoryAwareRetriever } from "langchain/chains/history_aware_retriever";
+import { Notice } from "obsidian";
 
 /**
  * Initializes OpenAI Embeddings.
@@ -44,7 +55,7 @@ export function getChatOpenAIModel(
 	return new ChatOpenAI({
 		openAIApiKey: settings.openAIApiKey,
 		modelName: modelName,
-		temperature: 0.5, 
+		temperature: TEMPATURE,
 	});
 }
 
@@ -55,74 +66,104 @@ export function getChatOpenAIModel(
  * @returns A promise that resolves to an instance of MemoryVectorStore.
  */
 export async function createMemoryVectorStore(
-	documents: Document[],
+	documents: Document[], // These are expected to be pre-split chunks
 	embeddings: OpenAIEmbeddings
 ): Promise<MemoryVectorStore> {
 	if (documents.length === 0) {
 		console.warn(
-			"No documents found to create vector store. The RAG chain might not find relevant context."
+			"No documents found to create vector store. The relevant context might not found."
 		);
+		return new MemoryVectorStore(embeddings); // Return an empty vector store
 	}
-	return MemoryVectorStore.fromDocuments(documents, embeddings);
+	// new Notice(
+	// 	`Creating vector store from ${documents.length} document chunks... This may take a moment.`,
+	// 	10000
+	// );
+	const vectorStore = await MemoryVectorStore.fromDocuments(
+		documents,
+		embeddings
+	);
+	new Notice(
+		`Vector store created successfully from ${documents.length} chunks.`,
+		5000
+	);
+	return vectorStore;
 }
 
 /**
- * Creates a RAG (Retrieval Augmented Generation) chain.
- * This chain first retrieves relevant documents from the vector store based on the input,
- * then combines these documents with the original input to generate an answer using an LLM.
- * @param llm - An instance of a Langchain LLM (e.g., ChatOpenAI).
- * @param vectorStore - An instance of a Langchain VectorStore (e.g., MemoryVectorStore).
- * @returns A Runnable sequence representing the RAG chain. The output of this chain
- * will typically be an object containing the `answer` and `context` (retrieved documents).
+ * Creates a Conversational RAG chain.
+ * It first uses chat history to rephrase the follow-up question, then retrieves documents,
+ * and finally generates an answer based on the retrieved context and original question.
+ * @param llm - An instance of ChatOpenAI.
+ * @param vectorStore - An instance of MemoryVectorStore.
+ * @param retrieverK - Optional number of document chunks the retriever should fetch.
+ * @returns A Runnable sequence for conversational RAG.
  */
-export async function createRAGChain(
+export async function createConversationalRAGChain(
 	llm: ChatOpenAI,
-	vectorStore: MemoryVectorStore
+	vectorStore: MemoryVectorStore,
+	retrieverK?: number
 ): Promise<Runnable> {
-	// The return type is more general, often a RunnableSequence
-	// Define a prompt template for answering questions based on retrieved context
-	const prompt = ChatPromptTemplate.fromTemplate(
-		`Answer the following question based only on the provided context:
-
-<context>
-{context}
-</context>
-
-Question: {input}`
-	);
-
-	// Create a chain that combines the retrieved documents into a string
-	// and then passes them to the LLM with the prompt.
-	const documentChain = await createStuffDocumentsChain({
-		llm: llm,
-		prompt: prompt,
-	});
-
 	// Create a retriever from the vector store
-	const retriever = vectorStore.asRetriever();
+	const retriever = vectorStore.asRetriever({
+		k: retrieverK ?? DEFAULT_DOC_FETCHED,
+	}); // Default to 5 docs if not specified
 
-	// Create the retrieval chain that first retrieves documents and then
-	// passes them to the documentChain.
-	const retrievalChain = await createRetrievalChain({
-		combineDocsChain: documentChain,
-		retriever: retriever,
+	// Prompt for rephrasing the question based on history
+	const queryGenerationPrompt = ChatPromptTemplate.fromMessages([
+		new MessagesPlaceholder("chat_history"),
+		["user", "{input}"],
+		["user", QUERY_GENERATION_PROMPT],
+	]);
+
+	// Create a retriever that's aware of the chat history
+	const historyAwareRetriever = await createHistoryAwareRetriever({
+		llm,
+		retriever,
+		rephrasePrompt: queryGenerationPrompt,
 	});
 
-	return retrievalChain;
-	// For conversational context (chat history), you would use createHistoryAwareRetriever
-	// and then combine it with the document chain.
-	// Example:
-	// import { MessagesPlaceholder } from "@langchain/core/prompts";
-	// import { createHistoryAwareRetriever } from "langchain/chains/history_aware_retriever";
-	// const historyAwarePrompt = ChatPromptTemplate.fromMessages([
-	// 	new MessagesPlaceholder("chat_history"),
-	// 	["user", "{input}"],
-	// 	["user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation"]
-	// ]);
-	// const historyAwareRetrieverChain = await createHistoryAwareRetriever({
-	// 	llm,
-	// 	retriever,
-	// 	rephrasePrompt: historyAwarePrompt
-	// });
-	// And then chain historyAwareRetrieverChain with documentChain.
+	// Prompt for answering the question based on retrieved context and history
+	const answerGenerationPrompt = ChatPromptTemplate.fromMessages([
+		["system", ANSWER_GENERATION_PROMPT],
+		new MessagesPlaceholder("chat_history"), // Include history for the LLM to maintain conversational flow
+		["user", "{input}"], // The original user input
+	]);
+
+	// Chain to combine documents and generate an answer
+	const documentChain = await createStuffDocumentsChain({
+		llm,
+		prompt: answerGenerationPrompt,
+	});
+
+	// The full conversational RAG chain
+	const conversationalRetrievalChain = RunnableSequence.from([
+		// Step 1: Prepare the input for the parallel processing step.
+		// This step receives the initial {input, chat_history} from the chain's invocation.
+		(initialInput: { input: string; chat_history: BaseMessage[] }) => {
+			return {
+				input: initialInput.input,
+				chat_history: initialInput.chat_history,
+				// The historyAwareRetriever also needs input and chat_history,
+				// so we pass them along for it to use.
+			};
+		},
+		// Step 2: Run historyAwareRetriever for context, and pass through input and chat_history.
+		// The output of this step: { context: Document[], input: string, chat_history: BaseMessage[] }
+		{
+			context: historyAwareRetriever, // historyAwareRetriever consumes {input, chat_history} from the previous step's output
+			input: (previousOutput: {
+				input: string;
+				chat_history: BaseMessage[];
+			}) => previousOutput.input,
+			chat_history: (previousOutput: {
+				input: string;
+				chat_history: BaseMessage[];
+			}) => previousOutput.chat_history,
+		},
+		// Step 3: documentChain consumes the output of Step 2.
+		documentChain,
+	]);
+
+	return conversationalRetrievalChain;
 }

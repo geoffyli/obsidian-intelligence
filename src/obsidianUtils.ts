@@ -35,9 +35,6 @@ export async function loadVaultDocuments(app: App): Promise<Document[]> {
 
 	for (let i = 0; i < markdownFiles.length; i++) {
 		const file = markdownFiles[i];
-		if (i > 0 && i % 50 === 0) { // Log progress every 50 files
-			new Notice(`Processing file ${i + 1} of ${markdownFiles.length}: ${file.name}`, 3000);
-		}
 		try {
 			const content = await app.vault.cachedRead(file);
 			
@@ -68,7 +65,7 @@ export async function loadVaultDocuments(app: App): Promise<Document[]> {
 			new Notice(`Skipping file ${file.name} due to processing error.`);
 		}
 	}
-	new Notice(`Processed ${markdownFiles.length} files into ${allChunks.length} chunks.`, 5000);
+	// new Notice(`Processed ${markdownFiles.length} files into ${allChunks.length} chunks.`, 5000);
 	return allChunks;
 }
 

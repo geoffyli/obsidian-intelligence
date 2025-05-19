@@ -6,3 +6,162 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+/* styles.css for Obsidian RAG Plugin Chat View */
+
+.rag-chat-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Fill available space */
+  padding: 10px;
+  box-sizing: border-box;
+  gap: 10px; /* Space between elements */
+}
+
+.rag-chat-header-controls {
+  display: flex;
+  justify-content: flex-end; /* Align button to the right */
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.rag-chat-clear-button {
+  /* Standard button styling will apply, add specifics if needed */
+  padding: 5px 10px;
+}
+
+
+.rag-messages-container {
+  flex-grow: 1; /* Take up available vertical space */
+  overflow-y: auto; /* Scroll for overflow */
+  border: 1px solid var(--background-modifier-border);
+  padding: 15px;
+  border-radius: var(--radius-m); /* Consistent Obsidian rounding */
+  background-color: var(--background-secondary); /* Slightly different background for message area */
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Space between messages */
+}
+
+.rag-message-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.rag-message-wrapper-user {
+  align-items: flex-end; /* User messages to the right */
+}
+
+.rag-message-wrapper-ai,
+.rag-message-wrapper-system {
+  align-items: flex-start; /* AI/System messages to the left */
+}
+
+.rag-message {
+  padding: 10px 15px;
+  border-radius: var(--radius-l); /* Softer, more bubbly radius for messages */
+  max-width: 80%; /* Don't let messages get too wide */
+  word-wrap: break-word; /* Handle long words */
+  line-height: 1.5;
+  box-shadow: var(--shadow-s); /* Subtle shadow for depth */
+}
+
+.rag-message-user {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border-bottom-right-radius: var(--radius-s); /* "Tail" effect */
+}
+
+.rag-message-ai {
+  background-color: var(--background-primary-alt); /* Different from message container bg */
+  border: 1px solid var(--background-modifier-border-hover);
+  color: var(--text-normal);
+  border-bottom-left-radius: var(--radius-s); /* "Tail" effect */
+}
+
+.rag-message-system {
+  background-color: transparent;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  font-size: 0.9em;
+  padding: 5px;
+  max-width: 100%;
+  border: none;
+  box-shadow: none;
+}
+
+/* Styling for Markdown content within messages */
+.rag-message p {
+  margin-top: 0;
+  margin-bottom: 0.5em; /* Spacing between paragraphs in a message */
+}
+.rag-message p:last-child {
+  margin-bottom: 0;
+}
+.rag-message pre {
+  margin: 0.5em 0;
+  padding: 0.8em;
+  border-radius: var(--radius-m);
+  background-color: var(--background-secondary-alt); /* For code blocks */
+  overflow-x: auto;
+}
+.rag-message code {
+  font-size: 0.9em;
+  background-color: var(--background-modifier-hover);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-s);
+}
+.rag-message pre code {
+  background-color: transparent; /* Code inside pre shouldn't have double bg */
+  padding: 0;
+}
+
+
+.rag-thinking-indicator {
+  display: flex; /* Used to center content if needed */
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  font-style: italic;
+  color: var(--text-faint);
+  height: 40px; /* Give it some space */
+}
+/* 
+.rag-thinking-indicator span {
+    /* Add spinner or animation here if desired */
+/*} */
+
+
+.rag-input-wrapper {
+  display: flex;
+  gap: 8px; /* Space between textarea and button */
+  align-items: flex-end; /* Align button with bottom of textarea if it grows */
+  padding-top: 5px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.rag-chat-input {
+  flex-grow: 1;
+  min-height: 44px; /* Good starting height for a single line + padding */
+  max-height: 200px; /* Prevent it from getting too tall */
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-size: var(--font-ui-medium);
+  line-height: 1.4;
+}
+
+.rag-chat-send-button {
+  min-height: 44px; /* Match input height */
+  padding: 0 15px;
+  /* Standard button styling will apply from Obsidian theme */
+}
+
+.rag-chat-send-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
