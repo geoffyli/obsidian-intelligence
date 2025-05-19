@@ -38,6 +38,8 @@ export const ANSWER_GENERATION_PROMPT = `You are an AI assistant for Obsidian. A
 	Here is the context from the user's notes:\n \
 	<context>\n{context}\n</context>\n `;
 
+export const CHATVIEW_WELCOME_MESSAGE = "Welcome to RAG Chat! Ask questions about your vault.";
+
 export const EMPTY_INDEX_ERROR_MESSAGE =
 	"Copilot index does not exist. Please index your vault first!\n\n1. Set a working embedding model in QA settings. If it's not a local model, don't forget to set the API key. \n\n2. Click 'Refresh Index for Vault' and wait for indexing to complete. If you encounter the rate limiting error, please turn your request per second down in QA setting.";
 export const CHUNK_SIZE = 3000;
