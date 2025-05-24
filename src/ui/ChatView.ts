@@ -5,31 +5,56 @@ import {
 	Notice,
 	MarkdownRenderer,
 	OpenViewState,
+	Editor,
+	EditorPosition,
+	TFile,
+	App,
 } from "obsidian";
 import ObsidianRAGPlugin from "../main";
-import { VIEW_TYPE_RAG_CHAT, CHATVIEW_WELCOME_MESSAGE } from "../constants";
+import { CHATVIEW_WELCOME_MESSAGE, VIEW_TYPE_RAG_CHAT } from "../constants";
 import { UIMessage, LangChainChatMessage } from "../types";
+import {
+	AVAILABLE_FILTERS,
+	FilterSignature,
+	// findFilterByEmoji,
+} from "../filters"; // findFilterByEmoji might be useful later
+import { parseFiltersFromPrompt } from "../parser";
+
+// --- Suggestion Types ---
+interface SuggestionItem {
+	type: "filterType" | "filterValue";
+	data: FilterSignature | string; // FilterSignature or a new type for date values
+	displayText: string;
+}
 
 export class ChatView extends ItemView {
 	plugin: ObsidianRAGPlugin;
 	private messagesContainer!: HTMLDivElement;
-	private inputArea!: HTMLTextAreaElement;
+	public inputArea!: HTMLTextAreaElement;
 	private sendButton!: HTMLButtonElement;
 	private thinkingIndicator!: HTMLDivElement;
 	private clearChatButton!: HTMLButtonElement;
-
-	private chatHistory: LangChainChatMessage[] = []; // Stores history for LangChain
+	private chatHistory: LangChainChatMessage[] = [];
+	// Custom Suggestion Popover Elements and State ---
+	private suggestionPopover!: HTMLDivElement;
+	private currSuggestions: SuggestionItem[] = [];
+	private activeSuggestionIndex = -1;
+	private isSuggesting = false;
+	// State for multi-stage suggestions
+	private selectedFilterType: FilterSignature | null = null;
+	private suggestionQuery = ""; // Store the query that triggered suggestions
+	private suggestionQueryPos = 0; // Store start pos of the query
+	// --- End Custom Suggestion Popover ---
 
 	constructor(leaf: WorkspaceLeaf, plugin: ObsidianRAGPlugin) {
 		super(leaf);
 		this.plugin = plugin;
-		this.icon = "messages-square"; // Set icon for the view tab
+		this.icon = "messages-square";
 	}
 
 	getViewType(): string {
 		return VIEW_TYPE_RAG_CHAT;
 	}
-
 	getDisplayText(): string {
 		return "RAG Chat";
 	}
@@ -39,7 +64,7 @@ export class ChatView extends ItemView {
 		container.empty();
 		container.addClass("rag-chat-view-container");
 
-		// Header for controls like clear chat
+		// Header part
 		const headerControls = container.createDiv({
 			cls: "rag-chat-header-controls",
 		});
@@ -51,94 +76,346 @@ export class ChatView extends ItemView {
 			"click",
 			this.handleClearChat.bind(this)
 		);
-
-		// Messages display area
+		// Message part
 		this.messagesContainer = container.createDiv({
 			cls: "rag-messages-container",
 		});
-
-		// Thinking indicator
 		this.thinkingIndicator = container.createDiv({
 			cls: "rag-thinking-indicator",
+			text: "AI is thinking...",
 		});
-		this.thinkingIndicator.style.display = "none"; // Initially hidden
-		const thinkingText = this.thinkingIndicator.createSpan();
-		thinkingText.setText("AI is thinking...");
-		// Optional: Add a simple spinner or animation here later
-
-		// Input area
+		this.thinkingIndicator.style.display = "none";
+		// Input part
 		const inputWrapper = container.createDiv({ cls: "rag-input-wrapper" });
 		this.inputArea = inputWrapper.createEl("textarea", {
 			cls: "rag-chat-input",
-			attr: { placeholder: "Ask your vault..." },
+			attr: {
+				placeholder:
+					"Type message or filter keyword (e.g., 'created today')...",
+			},
 		});
+		// Suggestion popover
+		this.suggestionPopover = inputWrapper.createDiv({
+			cls: "rag-suggestion-popover",
+		});
+		this.suggestionPopover.style.display = "none";
+
 		this.sendButton = inputWrapper.createEl("button", {
 			text: "Send",
 			cls: "rag-chat-send-button",
 		});
-
-		// Event listeners
 		this.sendButton.addEventListener(
 			"click",
 			this.handleSendMessage.bind(this)
 		);
-		this.inputArea.addEventListener("keydown", (event) => {
+		this.inputArea.addEventListener(
+			"input",
+			this.handleSuggestionDisplay.bind(this)
+		);
+		this.inputArea.addEventListener(
+			"keydown",
+			this.handleInputKeyDown.bind(this)
+		);
+
+		this.messagesContainer.addEventListener(
+			"click",
+			this.handleMessageContainerClick.bind(this)
+		);
+
+		const welcomeMessage = CHATVIEW_WELCOME_MESSAGE;
+		this.addMessageToDisplay({ sender: "system", text: welcomeMessage });
+
+		this.registerDomEvent(document, "click", (evt) => {
+			if (
+				!this.inputArea.contains(evt.target as Node) &&
+				!this.suggestionPopover.contains(evt.target as Node)
+			) {
+				this.hideSuggestions();
+			}
+		});
+	}
+
+	private handleSuggestionDisplay(event: Event): void {
+		const inputText = this.inputArea.value;
+		const cursorPos = this.inputArea.selectionStart;
+
+		/*
+		If the user has selected a filter type, we expect them to type a value for that filter.
+		Else, we check the last word before the cursor to determine if they are typing a filter keyword.
+		*/
+		if (this.selectedFilterType) {
+			this.showFilterValueSuggestions(this.selectedFilterType);
+		} else {
+			// Get the last word before the cursor
+			const textBeforeCursor = inputText.substring(0, cursorPos);
+			const wordMatch = textBeforeCursor.match(/([a-zA-Z0-9_'-]+)$/); // Or a more general trigger
+			const query = wordMatch ? wordMatch[1].toLowerCase() : "";
+
+			if (query.length >= 1) {
+				this.suggestionQuery = query;
+				this.suggestionQueryPos =
+					textBeforeCursor.length - query.length;
+				this.showFilterTypeSuggestions(query);
+			} else {
+				this.hideSuggestions();
+			}
+		}
+	}
+
+	private handleInputKeyDown(event: KeyboardEvent): void {
+		if (this.isSuggesting) {
+			if (event.key === "ArrowUp") {
+				event.preventDefault();
+				this.navigateSuggestions(-1);
+			} else if (event.key === "ArrowDown") {
+				event.preventDefault();
+				this.navigateSuggestions(1);
+			} else if (event.key === "Enter" || event.key === "Tab") {
+				event.preventDefault();
+				this.selectActiveSuggestion();
+			} else if (event.key === "Escape") {
+				event.preventDefault();
+				this.hideSuggestions();
+			}
+		} else {
 			if (event.key === "Enter" && !event.shiftKey) {
 				event.preventDefault();
 				this.handleSendMessage();
 			}
-		});
+		}
+	}
 
-		// Add event delegation for internal links on the messages container
-		this.messagesContainer.addEventListener("click", (event) => {
-			const target = event.target as HTMLElement;
-			// Check if the clicked element is an internal link within a message
-			if (
-				target.tagName === "A" &&
-				target.classList.contains("internal-link")
-			) {
-				event.preventDefault(); // Prevent default link behavior
-				const href =
-					target.getAttribute("data-href") ||
-					target.getAttribute("href");
-				if (href) {
-					// Use 'tab' to explicitly open in a new tab.
-					// The OpenViewState { active: true } ensures the new tab gets focus.
-					this.app.workspace
-						.openLinkText(href, "", "tab", {
-							active: true,
-						} as OpenViewState)
-						.catch((err) => {
-							console.error(`Error opening link: ${href}`, err);
-							new Notice(`Could not open note: ${href}`);
-						});
-				}
+	/**
+	 * Generating and displaying a list of relevant metadata filter type suggestions
+	 * based on user's current typing
+	 * @param query last word typed by the user
+	 */
+	private showFilterTypeSuggestions(query: string): void {
+		// Check if the query is a filter emoji
+		this.currSuggestions = AVAILABLE_FILTERS.filter((sig) =>
+			sig.triggerKeywords.some((keyword) =>
+				keyword.toLowerCase().startsWith(query)
+			)
+		)
+			.map((sig) => ({
+				type: "filterType" as const, // Added 'as const'
+				data: sig,
+				displayText: sig.suggestionDisplay,
+			}))
+			.slice(0, 7); // Limit to 7 suggestions
+
+		// If user is typing a filter keyword, add it as a direct suggestion
+		if (this.currSuggestions.length > 0) {
+			this.displaySuggestions();
+		} else {
+			this.hideSuggestions();
+		}
+	}
+
+	private showFilterValueSuggestions(filterSig: FilterSignature): void {
+		this.currSuggestions = Object.entries(filterSig.valueSuggestions).map(
+			([displayText, getValue]) => ({
+				type: "filterValue",
+				displayText,
+				data: getValue(),
+			})
+		);
+
+		// If user is typing a date like YYYY-MM-DD, add it as a direct suggestion
+		// if (/^\d{4}(-\d{0,2}(-\d{0,2})?)?$/.test(query) && query.length >= 4) {
+		// 	// Check if it's already perfectly matched by a placeholder or other suggestions
+		// 	const alreadyExists = this.currSuggestions.some(
+		// 		(s) => (s.data as DateValueSuggestion).key === query
+		// 	);
+		// 	if (!alreadyExists) {
+		// 		this.currSuggestions.unshift({
+		// 			// Add to the top
+		// 			type: "filterValue",
+		// 			data: {
+		// 				key: query,
+		// 				displayText: `Use date: ${query}`,
+		// 				isPlaceholder: false,
+		// 			},
+		// 			displayText: `Use date: ${query}`,
+		// 		});
+		// 	}
+		// }
+
+		this.displaySuggestions();
+		// if (this.currSuggestions.length > 0) {
+		// 	this.displaySuggestions();
+		// } else {
+		// 	// Even if no direct matches, if expecting date, keep popover for manual YYYY-MM-DD
+		// 	this.currSuggestions = [
+		// 		{
+		// 			type: "filterValue",
+		// 			data: {
+		// 				key: "yyyy-mm-dd",
+		// 				displayText: "Format: YYYY-MM-DD",
+		// 				isPlaceholder: true,
+		// 			},
+		// 			displayText: "Format: YYYY-MM-DD (type specific date)",
+		// 		},
+		// 	];
+		// 	this.displaySuggestions(true); // Pass true if we want to show even if only placeholder
+		// }
+	}
+
+	private displaySuggestions(): void {
+		if (this.currSuggestions.length > 0) {
+			this.isSuggesting = true;
+			this.activeSuggestionIndex = 0;
+			this.renderSuggestionItems();
+			this.suggestionPopover.style.display = "block";
+			this.suggestionPopover.style.top = `${
+				this.inputArea.offsetTop + this.inputArea.offsetHeight
+			}px`;
+			this.suggestionPopover.style.left = `${this.inputArea.offsetLeft}px`;
+			this.suggestionPopover.style.width = `${this.inputArea.offsetWidth}px`;
+		} else {
+			this.hideSuggestions();
+		}
+	}
+
+	private hideSuggestions(): void {
+		this.isSuggesting = false;
+		this.suggestionPopover.style.display = "none";
+		this.suggestionPopover.empty();
+		this.currSuggestions = [];
+		this.activeSuggestionIndex = -1;
+		if (
+			this.selectedFilterType &&
+			!this.inputArea.value.includes(this.selectedFilterType.emoji + " ")
+		) {
+			// If we were expecting a value but user bailed, clear the expectation
+			// This might happen if user deletes the emoji after it was inserted
+			// this.selectedFilterType = null; // Be careful with this, might clear too early
+		}
+	}
+
+	private renderSuggestionItems(): void {
+		this.suggestionPopover.empty();
+		this.currSuggestions.forEach((suggestionItem, index) => {
+			const itemEl = this.suggestionPopover.createDiv({
+				cls: "rag-suggestion-item",
+			});
+			itemEl.setText(suggestionItem.displayText);
+			if (index === this.activeSuggestionIndex) {
+				itemEl.addClass("is-selected");
 			}
-		});
-
-		// Initial welcome message
-		this.addMessageToDisplay({
-			sender: "system",
-			text: CHATVIEW_WELCOME_MESSAGE,
+			itemEl.addEventListener("mousedown", (e) => {
+				e.preventDefault();
+				this.activeSuggestionIndex = index;
+				this.selectActiveSuggestion();
+			});
 		});
 	}
 
-	private async addMessageToDisplay(message: UIMessage, isStreaming = false) {
+	private navigateSuggestions(direction: number): void {
+		// ... (unchanged)
+		if (!this.isSuggesting || this.currSuggestions.length === 0) return;
+		this.activeSuggestionIndex += direction;
+		if (this.activeSuggestionIndex < 0) {
+			this.activeSuggestionIndex = this.currSuggestions.length - 1;
+		} else if (this.activeSuggestionIndex >= this.currSuggestions.length) {
+			this.activeSuggestionIndex = 0;
+		}
+		this.renderSuggestionItems();
+	}
+
+	private selectActiveSuggestion(): void {
+		// When the suggestion popover not active or no active suggestion
+		if (
+			!this.isSuggesting ||
+			this.activeSuggestionIndex < 0 ||
+			this.activeSuggestionIndex >= this.currSuggestions.length
+		) {
+			this.hideSuggestions();
+			// If the input area has text and no active suggestion, send the message
+			if (
+				this.inputArea.value.trim().length > 0 &&
+				!this.currSuggestions[this.activeSuggestionIndex]
+			) {
+				this.handleSendMessage();
+			}
+			return;
+		}
+
+		const inputAreaText = this.inputArea.value;
+		const selectedSuggestion =
+			this.currSuggestions[this.activeSuggestionIndex];
+
+		if (selectedSuggestion.type === "filterType") {
+			const queryStartPos = this.suggestionQueryPos;
+			const signature = selectedSuggestion.data as FilterSignature;
+			const replacementText = signature.emoji + "{}"; // The replacement text is the emoji + {}
+			const textAfterQuery = inputAreaText.substring(
+				queryStartPos + this.suggestionQuery.length
+			);
+
+			this.inputArea.value =
+				inputAreaText.substring(0, queryStartPos) +
+				replacementText +
+				" " +
+				textAfterQuery;
+			// Set the new cursor position
+			const newCursorPos = queryStartPos + replacementText.length - 1; // Before the closing }
+			this.inputArea.setSelectionRange(newCursorPos, newCursorPos);
+
+			this.selectedFilterType = signature;
+			this.inputArea.focus(); // Keep focus to trigger input event for date suggestions
+			this.handleSuggestionDisplay(new Event("input")); // Trigger value suggestions
+		} else if (selectedSuggestion.type === "filterValue") {
+			const cursorPos = this.inputArea.selectionStart;
+			const valueToInsert = selectedSuggestion.data as string;
+
+			this.inputArea.value =
+				inputAreaText.substring(0, cursorPos) +
+				valueToInsert +
+				inputAreaText.substring(cursorPos);
+			// Set the new cursor position
+			const newCursorPos =
+				valueToInsert.length == 0
+					? cursorPos
+					: cursorPos + valueToInsert.length + 2; // After the value and the closing space
+			this.inputArea.setSelectionRange(newCursorPos, newCursorPos);
+
+			this.selectedFilterType = null; // Done with this filter
+			this.hideSuggestions();
+			this.inputArea.focus();
+		}
+	}
+
+	private handleMessageContainerClick(event: MouseEvent): void {
+		const target = event.target as HTMLElement;
+		if (
+			target.tagName === "A" &&
+			target.classList.contains("internal-link")
+		) {
+			event.preventDefault();
+			const href =
+				target.getAttribute("data-href") || target.getAttribute("href");
+			if (href) {
+				this.app.workspace
+					.openLinkText(href, "", "tab", {
+						active: true,
+					} as OpenViewState)
+					.catch((err) => {
+						console.error(`Error opening link: ${href}`, err);
+						new Notice(`Could not open note: ${href}`);
+					});
+			}
+		}
+	}
+
+	private async addMessageToDisplay(message: UIMessage) {
+		// ... (unchanged)
 		const messageElWrapper = this.messagesContainer.createDiv({
 			cls: `rag-message-wrapper rag-message-wrapper-${message.sender}`,
 		});
-
-		// Optional: Add sender icon or name
-		// if (message.sender === 'ai' || message.sender === 'user') {
-		//     messageElWrapper.createDiv({cls: `rag-sender-label ${message.sender}-label`, text: message.sender === 'ai' ? 'AI' : 'You'});
-		// }
-
 		const messageEl = messageElWrapper.createDiv({
 			cls: `rag-message rag-message-${message.sender}`,
 		});
-
-		// Use MarkdownRenderer for better formatting, including code blocks and lists
-		// For streaming, we might update this element's content directly.
 		await MarkdownRenderer.render(
 			this.app,
 			message.text,
@@ -146,34 +423,44 @@ export class ChatView extends ItemView {
 			this.plugin.manifest.dir || "",
 			this
 		);
-
-		// Scroll to bottom
 		this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
-		return messageEl; // Return for potential streaming updates
+		return messageEl;
 	}
 
 	private handleClearChat() {
 		this.chatHistory = [];
-		this.messagesContainer.empty(); // Clear displayed messages
-		this.addMessageToDisplay({
-			sender: "system",
-			text: "Chat cleared. Ask a new question!",
-		});
+		this.selectedFilterType = null; // Reset filter expectation
+		this.hideSuggestions();
+		this.messagesContainer.empty();
+		const welcomeMessage =
+			"Chat cleared. Ask a new question or type filter keywords.";
+		this.addMessageToDisplay({ sender: "system", text: welcomeMessage });
 		new Notice("Chat history cleared.");
 	}
 
 	private async handleSendMessage() {
-		const inputText = this.inputArea.value.trim();
-		if (!inputText) return;
+		// ... (unchanged)
+		const rawInputText = this.inputArea.value.trim();
 
-		// Add user message to UI and history
-		this.addMessageToDisplay({ sender: "user", text: inputText });
-		this.chatHistory.push({ type: "human", content: inputText });
-		this.inputArea.value = ""; // Clear input
+		if (!rawInputText) {
+			if (!this.isSuggesting) new Notice("Please type a message.");
+			return;
+		}
+		this.hideSuggestions();
+
+		const { semanticQuery, activeFilters } =
+			parseFiltersFromPrompt(rawInputText);
+
+		this.addMessageToDisplay({ sender: "user", text: rawInputText });
+
+		if (semanticQuery) {
+			this.chatHistory.push({ type: "human", content: semanticQuery });
+		}
+
+		this.inputArea.value = "";
 		this.inputArea.focus();
 
-		// Show thinking indicator and disable input
-		this.thinkingIndicator.style.display = "flex"; // Use flex for centering if styled
+		this.thinkingIndicator.style.display = "flex";
 		this.sendButton.disabled = true;
 		this.inputArea.disabled = true;
 
@@ -181,36 +468,33 @@ export class ChatView extends ItemView {
 			if (!this.plugin.settings.openAIApiKey) {
 				this.addMessageToDisplay({
 					sender: "system",
-					text: "OpenAI API Key is not set. Please configure it in the plugin settings.",
+					text: "API Key not set.",
 				});
+				this.thinkingIndicator.style.display = "none";
+				this.sendButton.disabled = false;
+				this.inputArea.disabled = false;
 				return;
 			}
 			if (!this.plugin.ragService.getIsInitialized()) {
 				this.addMessageToDisplay({
 					sender: "system",
-					text: "RAG service is not ready. Attempting to initialize...",
+					text: "RAG service not initialized. Please wait or re-initialize.",
 				});
-				await this.plugin.ragService.initialize();
-				if (!this.plugin.ragService.getIsInitialized()) {
-					this.addMessageToDisplay({
-						sender: "system",
-						text: "RAG Service could not be initialized. Please check settings and console.",
-					});
-					return;
-				}
-				this.addMessageToDisplay({
-					sender: "system",
-					text: "RAG service initialized. Ready to chat.",
-				});
+				this.thinkingIndicator.style.display = "none";
+				this.sendButton.disabled = false;
+				this.inputArea.disabled = false;
+				return;
 			}
 
-			// Pass history *before* current user message
-			const historyForChain = this.chatHistory.slice(0, -1);
+			const historyForChain = semanticQuery
+				? this.chatHistory.slice(0, -1)
+				: [];
 
 			const aiResponseText =
 				await this.plugin.ragService.processQueryWithHistory(
-					inputText,
-					historyForChain
+					semanticQuery,
+					historyForChain,
+					activeFilters
 				);
 
 			if (aiResponseText) {
@@ -218,15 +502,20 @@ export class ChatView extends ItemView {
 					sender: "ai",
 					text: aiResponseText,
 				});
-				this.chatHistory.push({ type: "ai", content: aiResponseText });
+				if (semanticQuery) {
+					this.chatHistory.push({
+						type: "ai",
+						content: aiResponseText,
+					});
+				}
 			} else {
 				this.addMessageToDisplay({
 					sender: "system",
-					text: "Sorry, I couldn't retrieve an answer. The RAG chain might not have found relevant context or an error occurred.",
+					text: "No specific answer generated. If you used filters, check if any notes matched.",
 				});
 			}
 		} catch (error) {
-			console.error("Error processing RAG query in ChatView:", error);
+			console.error("Error processing query in ChatView:", error);
 			this.addMessageToDisplay({
 				sender: "system",
 				text: `Error: ${(error as Error).message}`,
@@ -240,7 +529,6 @@ export class ChatView extends ItemView {
 	}
 
 	async onClose() {
-		// Perform any cleanup if necessary
 		console.log("RAG ChatView closed");
 	}
 }

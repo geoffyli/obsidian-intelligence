@@ -1,11 +1,6 @@
 import {
-	App,
-	Editor,
-	MarkdownView,
-	Modal,
 	Notice,
 	Plugin,
-	PluginSettingTab,
 	WorkspaceLeaf,
 } from "obsidian";
 import { COMMAND_IDS, COMMAND_NAMES, VIEW_TYPE_RAG_CHAT } from "./constants";

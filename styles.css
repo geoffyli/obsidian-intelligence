@@ -1,12 +1,3 @@
-/*
-
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
-
 /* styles.css for Obsidian RAG Plugin Chat View */
 
 .rag-chat-view-container {
@@ -22,12 +13,44 @@ If your plugin does not need CSS, delete this file.
   display: flex;
   justify-content: flex-end; /* Align button to the right */
   padding-bottom: 5px;
-  border-bottom: 1px solid var(--background-modifier-border);
+  /* border-bottom: 1px solid var(--background-modifier-border); */ /* Optional: remove if filter pills are enough separation */
 }
 
 .rag-chat-clear-button {
   /* Standard button styling will apply, add specifics if needed */
   padding: 5px 10px;
+}
+
+/* Container for filter pills */
+.rag-filter-pills-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow pills to wrap to next line */
+  gap: 6px; /* Space between pills */
+  padding: 5px 0; /* Padding around the pills area */
+  margin-bottom: 5px; /* Space below pills before messages */
+  /* border-bottom: 1px solid var(--background-modifier-border); */ /* Optional separator */
+}
+
+.rag-filter-pill {
+  display: inline-flex; /* Align text and remove button nicely */
+  align-items: center;
+  background-color: var(--background-modifier-accent); /* Use an accent color */
+  color: var(--text-on-accent); /* Ensure text is readable on accent */
+  padding: 4px 8px;
+  border-radius: var(--radius-s); /* Smaller radius for pills */
+  font-size: 0.85em;
+  cursor: default; /* Indicate it's not plain text */
+}
+
+.rag-filter-pill-remove {
+  margin-left: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0 2px; /* Make it easier to click */
+}
+
+.rag-filter-pill-remove:hover {
+  color: var(--text-error); /* Or a lighter/darker shade of the pill text color */
 }
 
 
@@ -127,10 +150,9 @@ If your plugin does not need CSS, delete this file.
   color: var(--text-faint);
   height: 40px; /* Give it some space */
 }
-/* 
-.rag-thinking-indicator span {
+/* .rag-thinking-indicator span {
     /* Add spinner or animation here if desired */
-/*} */
+/* } */
 
 
 .rag-input-wrapper {
@@ -164,4 +186,49 @@ If your plugin does not need CSS, delete this file.
 .rag-chat-send-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+/* ... existing styles ... */
+
+.rag-input-wrapper {
+  position: relative; /* Needed for absolute positioning of popover */
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding-top: 5px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.rag-suggestion-popover {
+  position: absolute;
+  /* bottom: 100%; */ /* Position above the input area */
+  /* Instead of bottom, let's try to position it based on inputArea's top + height in JS */
+  /* left: 0; */
+  background-color: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-l);
+  z-index: 100; /* Ensure it's above other elements */
+  max-height: 200px; /* Limit height */
+  overflow-y: auto;
+  width: 100%; /* Match input area width, or set dynamically */
+}
+
+.rag-suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--background-modifier-border-hover);
+}
+.rag-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.rag-suggestion-item:hover {
+  background-color: var(--background-modifier-hover);
+}
+
+.rag-suggestion-item.is-selected {
+	  background-color: var(--interactive-accent);
+  /* background-color: var(--background-modifier-accent-hover); Or var(--interactive-accent) with adjusted text color */
+  /* color: var(--text-on-accent); Ensure text is readable */
 }

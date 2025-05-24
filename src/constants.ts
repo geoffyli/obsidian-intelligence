@@ -1,7 +1,7 @@
 // import { CustomModel } from "@/aiParams";
 // import { DEFAULT_INLINE_EDIT_COMMANDS } from "@/commands/constants";
 // import { type CopilotSettings } from "@/settings/model";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 // import { ChainType } from "./chainFactory";
 
 export const BREVILABS_API_BASE_URL = "https://api.brevilabs.com/v1";
@@ -27,7 +27,7 @@ export const ANSWER_GENERATION_PROMPT = `You are an AI assistant for Obsidian. A
 	The requirments are stated as follows:\n \
 	1. Never mention that you do not have access to something. Always rely on the user provided context.\n \
 	2. Always answer to the best of your knowledge. If you are unsure about something, say so and ask the user to provide more context.\n \
-	3. If the user mentions \"note\", it most likely means an Obsidian note in the vault, not the generic meaning of a note.\n \
+	3. If the user mentions "note", it most likely means an Obsidian note in the vault, not the generic meaning of a note.\n \
 	4. Always use $'s instead of \\[ etc. for LaTeX equations.\n \
 	5. When showing note titles, use [[title]] format and do not wrap them in \` \`\n \
 	6. When showing **Obsidian internal** image links, use ![[link]] format and do not wrap them in \` \`.\n \
@@ -158,3 +158,4 @@ export const VIEW_TYPE_RAG_CHAT = "obsidian-rag-chat-view"; // Unique view type 
 //   USER_STOPPED = "user-stopped",
 //   NEW_CHAT = "new-chat",
 // }
+
