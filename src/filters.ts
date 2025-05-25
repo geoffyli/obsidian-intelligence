@@ -1,5 +1,5 @@
 // src/filters.ts
-import { MetadataField } from "./types";
+import { MetadataField, MetadataCondition } from "./types";
 
 export interface FilterSignature {
 	id: string; // Unique key for this filter signature
@@ -7,6 +7,7 @@ export interface FilterSignature {
 	suggestionDisplay: string; // Text displayed in the suggestion list
 	emoji: string; // Emoji for this filter type
 	field: MetadataField; // The metadata field this filter
+	condition: MetadataCondition; // The condition to apply for this filter
 	valueSuggestions: Record<string, () => string>; // The value suggestions for this filter
 }
 
@@ -17,6 +18,7 @@ export const AVAILABLE_FILTERS: FilterSignature[] = [
 		suggestionDisplay: "🛫 Created: On specific date", // Indicates more input needed
 		emoji: "🛫",
 		field: "createdAt",
+		condition: "is",
 		valueSuggestions: {
 			Today: () => new Date().toISOString().split("T")[0], // return the ISO date of today,
 			Yesterday: () =>
@@ -33,6 +35,7 @@ export const AVAILABLE_FILTERS: FilterSignature[] = [
 		suggestionDisplay: "✈️ Modified: On specific date", // Indicates more input needed
 		emoji: "✈️",
 		field: "modifiedAt",
+		condition: "is",
 		valueSuggestions: {
 			Today: () => new Date().toISOString().split("T")[0], // return the ISO date of today,
 			Yesterday: () =>

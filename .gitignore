@@ -55,3 +55,7 @@ src/tests
 **/tests/
 
 **.env
+
+# Claude
+.claude
+CLAUDE.md

@@ -439,16 +439,14 @@ export class ChatView extends ItemView {
 	}
 
 	private async handleSendMessage() {
-		// ... (unchanged)
 		const rawInputText = this.inputArea.value.trim();
-
 		if (!rawInputText) {
 			if (!this.isSuggesting) new Notice("Please type a message.");
 			return;
 		}
 		this.hideSuggestions();
 
-		const { semanticQuery, activeFilters } =
+		const { semanticQuery, metadataFilters } =
 			parseFiltersFromPrompt(rawInputText);
 
 		this.addMessageToDisplay({ sender: "user", text: rawInputText });
@@ -462,9 +460,10 @@ export class ChatView extends ItemView {
 
 		this.thinkingIndicator.style.display = "flex";
 		this.sendButton.disabled = true;
-		this.inputArea.disabled = true;
+		// this.inputArea.disabled = true;
 
 		try {
+			// Check if the API key is set and RAG service is initialized
 			if (!this.plugin.settings.openAIApiKey) {
 				this.addMessageToDisplay({
 					sender: "system",
@@ -494,7 +493,7 @@ export class ChatView extends ItemView {
 				await this.plugin.ragService.processQueryWithHistory(
 					semanticQuery,
 					historyForChain,
-					activeFilters
+					metadataFilters
 				);
 
 			if (aiResponseText) {

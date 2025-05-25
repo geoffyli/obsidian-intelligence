@@ -60,34 +60,26 @@ export function getChatOpenAIModel(
 }
 
 /**
- * Creates a MemoryVectorStore from an array of Documents.
- * @param documents - An array of Langchain Document objects.
- * @param embeddings - An instance of OpenAIEmbeddings.
+ * Creates a MemoryVectorStore by embedding documents.
+ * This is used for the initial indexing process.
+ * @param documents - An array of Langchain Document objects (chunks).
+ * @param embeddingsService - An instance of OpenAIEmbeddings service.
  * @returns A promise that resolves to an instance of MemoryVectorStore.
  */
-export async function createMemoryVectorStore(
-	documents: Document[], // These are expected to be pre-split chunks
-	embeddings: OpenAIEmbeddings
+export async function createAndEmbedVectorStore( // Renamed for clarity
+    documents: Document[], 
+    embeddingsService: OpenAIEmbeddings // Expecting the service instance
 ): Promise<MemoryVectorStore> {
-	if (documents.length === 0) {
-		console.warn(
-			"No documents found to create vector store. The relevant context might not found."
-		);
-		return new MemoryVectorStore(embeddings); // Return an empty vector store
-	}
-	// new Notice(
-	// 	`Creating vector store from ${documents.length} document chunks... This may take a moment.`,
-	// 	10000
-	// );
-	const vectorStore = await MemoryVectorStore.fromDocuments(
-		documents,
-		embeddings
-	);
-	new Notice(
-		`Vector store created successfully from ${documents.length} chunks.`,
-		5000
-	);
-	return vectorStore;
+    if (documents.length === 0) {
+        console.warn("No document chunks found to create vector store.");
+        // Return an empty vector store, initialized with the embedding function
+        return new MemoryVectorStore(embeddingsService); 
+    }
+    new Notice(`Embedding ${documents.length} document chunks... This may take a moment.`, 10000);
+    // MemoryVectorStore.fromDocuments will use the provided embeddingsService to generate embeddings
+    const vectorStore = await MemoryVectorStore.fromDocuments(documents, embeddingsService);
+    new Notice(`Vector store created and ${documents.length} chunks embedded successfully.`, 5000);
+    return vectorStore;
 }
 
 /**

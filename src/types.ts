@@ -36,3 +36,16 @@ export interface UIMessage {
     text: string;
     timestamp?: Date; // Optional: for displaying message times
 }
+
+/**
+ * Defines the structure for a metadata filter.
+ */
+export type MetadataField = 'modifiedAt' | 'createdAt' | 'fileName' | 'basename' | 'source';
+export type MetadataCondition = "is" | ">" | ">=" | "<" | "<=" | "contains" | "startsWith" | "endsWith" | "in";
+
+export interface MetadataFilter {
+    // id: string;
+    field: MetadataField;
+	condition: MetadataCondition;
+    value: string;
+}
