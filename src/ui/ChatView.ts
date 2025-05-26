@@ -5,10 +5,10 @@ import {
 	Notice,
 	MarkdownRenderer,
 	OpenViewState,
-	Editor,
-	EditorPosition,
+	// Editor,
+	// EditorPosition,
 	TFile,
-	App,
+	// App,
 } from "obsidian";
 import ObsidianRAGPlugin from "../main";
 import { CHATVIEW_WELCOME_MESSAGE, VIEW_TYPE_RAG_CHAT } from "../constants";
@@ -22,8 +22,8 @@ import { parseFiltersFromPrompt } from "../parser";
 
 // --- Suggestion Types ---
 interface SuggestionItem {
-	type: "filterType" | "filterValue";
-	data: FilterSignature | string; // FilterSignature or a new type for date values
+	type: "filterType" | "filterValue" | "fileName";
+	data: FilterSignature | string | TFile; // FilterSignature, string, or TFile for file suggestions
 	displayText: string;
 }
 
@@ -44,6 +44,9 @@ export class ChatView extends ItemView {
 	private selectedFilterType: FilterSignature | null = null;
 	private suggestionQuery = ""; // Store the query that triggered suggestions
 	private suggestionQueryPos = 0; // Store start pos of the query
+	// File suggestion state
+	private isFileMode = false;
+	private fileTriggerPos = 0;
 	// --- End Custom Suggestion Popover ---
 
 	constructor(leaf: WorkspaceLeaf, plugin: ObsidianRAGPlugin) {
@@ -135,9 +138,50 @@ export class ChatView extends ItemView {
 		});
 	}
 
+	/**
+	 * Get file suggestions based on query string
+	 * @param query - The search query for file basenames
+	 * @returns Array of TFile objects sorted by creation time
+	 */
+	private getFileSuggestions(query = ""): TFile[] {
+		const allFiles = this.app.vault.getFiles()
+			.filter(file => file.extension === "md");
+		
+		if (!query) {
+			// Return recently created files
+			return allFiles
+				.sort((a, b) => b.stat.ctime - a.stat.ctime)
+				.slice(0, 7);
+		}
+		
+		// Return prefix-matched files
+		return allFiles
+			.filter(file => file.basename.toLowerCase().startsWith(query.toLowerCase()))
+			.sort((a, b) => b.stat.ctime - a.stat.ctime)
+			.slice(0, 7);
+	}
+
 	private handleSuggestionDisplay(event: Event): void {
 		const inputText = this.inputArea.value;
 		const cursorPos = this.inputArea.selectionStart;
+		const textBeforeCursor = inputText.substring(0, cursorPos);
+
+		// Check for [[ trigger for file suggestions
+		const doubleBracketMatch = textBeforeCursor.match(/\[\[([^\]]*)$/);
+		if (doubleBracketMatch) {
+			const fileQuery = doubleBracketMatch[1];
+			this.isFileMode = true;
+			this.fileTriggerPos = cursorPos - doubleBracketMatch[0].length;
+			this.showFileSuggestions(fileQuery);
+			return;
+		}
+
+		// Reset file mode if not in [[ context
+		if (this.isFileMode) {
+			this.isFileMode = false;
+			this.hideSuggestions();
+			return;
+		}
 
 		/*
 		If the user has selected a filter type, we expect them to type a value for that filter.
@@ -147,7 +191,6 @@ export class ChatView extends ItemView {
 			this.showFilterValueSuggestions(this.selectedFilterType);
 		} else {
 			// Get the last word before the cursor
-			const textBeforeCursor = inputText.substring(0, cursorPos);
 			const wordMatch = textBeforeCursor.match(/([a-zA-Z0-9_'-]+)$/); // Or a more general trigger
 			const query = wordMatch ? wordMatch[1].toLowerCase() : "";
 
@@ -210,6 +253,21 @@ export class ChatView extends ItemView {
 		} else {
 			this.hideSuggestions();
 		}
+	}
+
+	/**
+	 * Show file suggestions based on the query
+	 * @param query - The search query for file basenames
+	 */
+	private showFileSuggestions(query: string): void {
+		const files = this.getFileSuggestions(query);
+		this.currSuggestions = files.map(file => ({
+			type: "fileName" as const,
+			data: file,
+			displayText: file.basename
+		}));
+		
+		this.displaySuggestions();
 	}
 
 	private showFilterValueSuggestions(filterSig: FilterSignature): void {
@@ -283,6 +341,9 @@ export class ChatView extends ItemView {
 		this.suggestionPopover.empty();
 		this.currSuggestions = [];
 		this.activeSuggestionIndex = -1;
+		// Reset file mode state
+		this.isFileMode = false;
+		this.fileTriggerPos = 0;
 		if (
 			this.selectedFilterType &&
 			!this.inputArea.value.includes(this.selectedFilterType.emoji + " ")
@@ -381,6 +442,21 @@ export class ChatView extends ItemView {
 			this.inputArea.setSelectionRange(newCursorPos, newCursorPos);
 
 			this.selectedFilterType = null; // Done with this filter
+			this.hideSuggestions();
+			this.inputArea.focus();
+		} else if (selectedSuggestion.type === "fileName") {
+			const file = selectedSuggestion.data as TFile;
+			const cursorPos = this.inputArea.selectionStart;
+			
+			// Replace [[ + partial text with [[filename]]
+			const beforeTrigger = inputAreaText.substring(0, this.fileTriggerPos);
+			const afterCursor = inputAreaText.substring(cursorPos);
+			
+			this.inputArea.value = beforeTrigger + `[[${file.basename}]]` + afterCursor;
+			const newCursorPos = this.fileTriggerPos + file.basename.length + 4; // After ]]
+			this.inputArea.setSelectionRange(newCursorPos, newCursorPos);
+			
+			this.isFileMode = false;
 			this.hideSuggestions();
 			this.inputArea.focus();
 		}
