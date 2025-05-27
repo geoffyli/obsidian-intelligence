@@ -1,5 +1,5 @@
 // src/filters.ts
-import { MetadataField, MetadataCondition } from "./types";
+import type { MetadataField, MetadataCondition } from "./types";
 
 export interface FilterSignature {
 	id: string; // Unique key for this filter signature
@@ -15,8 +15,8 @@ export const AVAILABLE_FILTERS: FilterSignature[] = [
 	{
 		id: "created_on_date",
 		triggerKeywords: ["created on", "cdate", "created date"],
-		suggestionDisplay: "🛫 Created: On specific date", // Indicates more input needed
-		emoji: "🛫",
+		suggestionDisplay: "➕ Created: On specific date", // Indicates more input needed
+		emoji: "➕",
 		field: "createdAt",
 		condition: "is",
 		valueSuggestions: {
@@ -32,8 +32,8 @@ export const AVAILABLE_FILTERS: FilterSignature[] = [
 	{
 		id: "modified_on_date",
 		triggerKeywords: ["modified on", "mdate", "modified date"],
-		suggestionDisplay: "✈️ Modified: On specific date", // Indicates more input needed
-		emoji: "✈️",
+		suggestionDisplay: "📝 Modified: On specific date", // Indicates more input needed
+		emoji: "📝",
 		field: "modifiedAt",
 		condition: "is",
 		valueSuggestions: {

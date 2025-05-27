@@ -1,7 +1,7 @@
 // src/obsidianUtils.ts
 // Utility functions for interacting with the Obsidian API and preparing documents.
 
-import { App, Notice, TFile, Setting } from "obsidian";
+import { App, Notice, TFile } from "obsidian";
 import { Document } from "langchain/document";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 // import { DateConditionKey, MetadataCondition, MetadataField } from "./types"; // Import DateConditionKey

@@ -11,7 +11,7 @@ import {
 	MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { Runnable, RunnableSequence } from "@langchain/core/runnables"; // For type hint
-import { ObsidianRAGPluginSettings, LangChainChatMessage } from "./types";
+import type { ObsidianRAGPluginSettings, LangChainChatMessage } from "./types";
 import {
 	ChatModels,
 	TEMPATURE,

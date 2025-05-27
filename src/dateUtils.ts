@@ -1,4 +1,4 @@
-import { MetadataCondition } from "./types";
+import type { MetadataCondition } from "./types";
 
 /**
  * Calculates a date range based on a meadata field and metadata condition.

@@ -1,12 +1,11 @@
-// src/ui/SettingsTab.ts
-// Defines the settings tab UI for the plugin.
-
-import { App, PluginSettingTab, Setting, Notice } from "obsidian";
-import ObsidianRAGPlugin from "../main"; // Adjust path as needed
-import { ObsidianRAGPluginSettings } from "../types"; // Adjust path as needed
+import { App, PluginSettingTab } from "obsidian";
+import ObsidianRAGPlugin from "../main";
+import SettingsTabComponent from "./SettingsTab.svelte";
+import { mount, unmount } from "svelte";
 
 export class RAGSettingsTab extends PluginSettingTab {
 	plugin: ObsidianRAGPlugin;
+	private svelteComponent: any = null;
 
 	constructor(app: App, plugin: ObsidianRAGPlugin) {
 		super(app, plugin);
@@ -16,43 +15,43 @@ export class RAGSettingsTab extends PluginSettingTab {
 	display(): void {
 		const { containerEl } = this;
 
+		// Clear any existing content
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Obsidian RAG Settings" });
+        // Defensive check: Ensure plugin and settings are available
+        if (!this.plugin) {
+            console.error("RAGSettingsTab Error: Plugin instance is not available.");
+            containerEl.setText("Error: RAG Plugin instance is not available. Cannot display settings.");
+            return;
+        }
 
-		// Setting for the OpenAI API Key
-		new Setting(containerEl)
-			.setName("OpenAI API Key")
-			.setDesc("Enter your OpenAI API key. Changes are saved when you click away.")
-			.addText((text) => {
-				text
-					.setPlaceholder("sk-...")
-					.setValue(this.plugin.settings.openAIApiKey)
-					.onChange(async (value) => {
-						// Update the setting in memory on each change
-						this.plugin.settings.openAIApiKey = value.trim();
-						// Do NOT save settings here to avoid re-initializing on every keystroke.
-					});
-				
-				// Add an onblur event listener to save settings when the input field loses focus
-				text.inputEl.addEventListener('blur', async () => {
-					new Notice("OpenAI API Key updated. Saving settings...");
-					await this.plugin.saveSettings(); // This will trigger re-initialization via main.ts
-				});
-			});
+        if (!this.plugin.settings) {
+            console.error("RAGSettingsTab Error: Plugin settings are not loaded.");
+            // Optionally, try to load settings again or show an error
+            // await this.plugin.loadSettings(); // Be careful with async operations directly in display if not handled well
+            // if (!this.plugin.settings) {
+            containerEl.setText("Error: RAG Plugin settings are not loaded. Please try reloading the plugin.");
+            return;
+            // }
+        }
 		
-		// Existing setting (example)
-		new Setting(containerEl)
-			.setName("My Original Setting")
-			.setDesc("It's a secret (original setting example).")
-			.addText((text) =>
-				text
-					.setPlaceholder("Enter your secret")
-					.setValue(this.plugin.settings.mySetting)
-					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
-						await this.plugin.saveSettings();
-					})
-			);
+		// Mount the Svelte 5 component
+		this.svelteComponent = mount(SettingsTabComponent, {
+			target: containerEl,
+			props: {
+				plugin: this.plugin,
+			},
+		});
+	}
+
+	// Optional: If you need to explicitly destroy the Svelte component when the tab is hidden/closed
+	// This is good practice for preventing memory leaks, though Svelte is often good at cleanup.
+	hide(): void {
+		if (this.svelteComponent) {
+			// In Svelte 5, use unmount function to clean up
+			unmount(this.svelteComponent);
+			this.svelteComponent = null;
+		}
+		// containerEl is automatically emptied by Obsidian when the tab is re-displayed or closed.
 	}
 }

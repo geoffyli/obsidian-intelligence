@@ -4,7 +4,8 @@ import {
 	WorkspaceLeaf,
 } from "obsidian";
 import { COMMAND_IDS, COMMAND_NAMES, VIEW_TYPE_RAG_CHAT } from "./constants";
-import { ObsidianRAGPluginSettings, DEFAULT_SETTINGS } from "./types";
+import { DEFAULT_SETTINGS } from "./types";
+import type { ObsidianRAGPluginSettings } from "./types";
 import { RAGSettingsTab } from "./ui/SettingsTab";
 import { RAGService } from "./ragService";
 import { ChatView } from "./ui/ChatView"; // Import the new ChatView
@@ -72,7 +73,7 @@ export default class ObsidianRAGPlugin extends Plugin {
 		this.statusBarItemEl = this.addStatusBarItem();
 		this.updateStatusBar("RAG"); // Initial placeholder
 
-		this.addSettingTab(new RAGSettingsTab(this.app, this));
+		this.addSettingTab(new RAGSettingsTab(this.app, this)); 
 	}
 
 	onunload() {
@@ -125,10 +126,15 @@ export default class ObsidianRAGPlugin extends Plugin {
 
     async saveSettings() {
         await this.saveData(this.settings);
-        if (this.ragService) {
-            new Notice("Settings saved. RAG service will re-initialize.");
-            // Status bar update is handled within reInitialize
+        if (this.ragService && this.ragService.getIsInitialized()) { // Check if ragService and initialized
+            new Notice("Settings saved. RAG service will re-initialize if API key changed or to apply other settings.");
+            // Conditionally re-initialize. For now, re-initializing if settings are saved.
+            // You might want more granular control here, e.g., only re-initialize if API key changed.
             await this.ragService.reInitialize();
+        } else if (this.ragService && !this.ragService.getIsInitialized()) {
+            new Notice("Settings saved. RAG service is not yet initialized. It will use new settings on next initialization.");
+        } else {
+             new Notice("Settings saved.");
         }
     }
 }

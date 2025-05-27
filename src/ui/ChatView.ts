@@ -4,20 +4,19 @@ import {
 	WorkspaceLeaf,
 	Notice,
 	MarkdownRenderer,
-	OpenViewState,
 	// Editor,
 	// EditorPosition,
 	TFile,
 	// App,
 } from "obsidian";
+import type { OpenViewState } from "obsidian";
 import ObsidianRAGPlugin from "../main";
 import { CHATVIEW_WELCOME_MESSAGE, VIEW_TYPE_RAG_CHAT } from "../constants";
-import { UIMessage, LangChainChatMessage } from "../types";
+import type { UIMessage, LangChainChatMessage } from "../types";
 import {
 	AVAILABLE_FILTERS,
-	FilterSignature,
-	// findFilterByEmoji,
-} from "../filters"; // findFilterByEmoji might be useful later
+} from "../filters";
+import type { FilterSignature } from "../filters"; // findFilterByEmoji might be useful later
 import { parseFiltersFromPrompt } from "../parser";
 
 // --- Suggestion Types ---
@@ -25,6 +24,14 @@ interface SuggestionItem {
 	type: "filterType" | "filterValue" | "fileName";
 	data: FilterSignature | string | TFile; // FilterSignature, string, or TFile for file suggestions
 	displayText: string;
+}
+
+interface ActiveInputFilterPill {
+    id: string; // Unique ID for the pill
+    filterSignature: FilterSignature;
+    value: string;
+    displayText: string; // e.g., "Created: 2023-10-01"
+    element: HTMLElement; // Reference to the pill's DOM element
 }
 
 export class ChatView extends ItemView {
@@ -47,6 +54,10 @@ export class ChatView extends ItemView {
 	// File suggestion state
 	private isFileMode = false;
 	private fileTriggerPos = 0;
+	// Input pill container
+	private inputPillContainer!: HTMLDivElement;
+	private activeInputPills: ActiveInputFilterPill[] = [];
+
 	// --- End Custom Suggestion Popover ---
 
 	constructor(leaf: WorkspaceLeaf, plugin: ObsidianRAGPlugin) {
@@ -90,11 +101,11 @@ export class ChatView extends ItemView {
 		this.thinkingIndicator.style.display = "none";
 		// Input part
 		const inputWrapper = container.createDiv({ cls: "rag-input-wrapper" });
-		this.inputArea = inputWrapper.createEl("textarea", {
-			cls: "rag-chat-input",
+		this.inputPillContainer = inputWrapper.createEl("div", {
+			cls: "rag-chat-input-pills", // New class for styling
 			attr: {
-				placeholder:
-					"Type message or filter keyword (e.g., 'created today')...",
+				contenteditable: "true",
+				placeholder: "Type message or filter keyword...", // Placeholder handled via CSS/JS
 			},
 		});
 		// Suggestion popover
@@ -144,19 +155,22 @@ export class ChatView extends ItemView {
 	 * @returns Array of TFile objects sorted by creation time
 	 */
 	private getFileSuggestions(query = ""): TFile[] {
-		const allFiles = this.app.vault.getFiles()
-			.filter(file => file.extension === "md");
-		
+		const allFiles = this.app.vault
+			.getFiles()
+			.filter((file) => file.extension === "md");
+
 		if (!query) {
 			// Return recently created files
 			return allFiles
 				.sort((a, b) => b.stat.ctime - a.stat.ctime)
 				.slice(0, 7);
 		}
-		
+
 		// Return prefix-matched files
 		return allFiles
-			.filter(file => file.basename.toLowerCase().startsWith(query.toLowerCase()))
+			.filter((file) =>
+				file.basename.toLowerCase().startsWith(query.toLowerCase())
+			)
 			.sort((a, b) => b.stat.ctime - a.stat.ctime)
 			.slice(0, 7);
 	}
@@ -261,12 +275,12 @@ export class ChatView extends ItemView {
 	 */
 	private showFileSuggestions(query: string): void {
 		const files = this.getFileSuggestions(query);
-		this.currSuggestions = files.map(file => ({
+		this.currSuggestions = files.map((file) => ({
 			type: "fileName" as const,
 			data: file,
-			displayText: file.basename
+			displayText: file.basename,
 		}));
-		
+
 		this.displaySuggestions();
 	}
 
@@ -447,15 +461,19 @@ export class ChatView extends ItemView {
 		} else if (selectedSuggestion.type === "fileName") {
 			const file = selectedSuggestion.data as TFile;
 			const cursorPos = this.inputArea.selectionStart;
-			
+
 			// Replace [[ + partial text with [[filename]]
-			const beforeTrigger = inputAreaText.substring(0, this.fileTriggerPos);
+			const beforeTrigger = inputAreaText.substring(
+				0,
+				this.fileTriggerPos
+			);
 			const afterCursor = inputAreaText.substring(cursorPos);
-			
-			this.inputArea.value = beforeTrigger + `[[${file.basename}]]` + afterCursor;
+
+			this.inputArea.value =
+				beforeTrigger + `[[${file.basename}]]` + afterCursor;
 			const newCursorPos = this.fileTriggerPos + file.basename.length + 4; // After ]]
 			this.inputArea.setSelectionRange(newCursorPos, newCursorPos);
-			
+
 			this.isFileMode = false;
 			this.hideSuggestions();
 			this.inputArea.focus();

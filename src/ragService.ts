@@ -1,6 +1,6 @@
 // src/ragService.ts
 import { App, Notice } from "obsidian";
-import {
+import type {
 	ObsidianRAGPluginSettings,
 	LangChainChatMessage,
 	MetadataFilter,

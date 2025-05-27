@@ -1,5 +1,5 @@
 // src/parser.ts
-import { MetadataFilter } from "./types";
+import type { MetadataFilter } from "./types";
 import { findFilterByEmoji } from "./filters"; // Assuming filters.ts
 
 

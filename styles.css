@@ -1,5 +1,8 @@
 /* src/styles/main.scss */
 @layer properties;
+.absolute {
+  position: absolute;
+}
 .sticky {
   position: sticky;
 }
@@ -20,6 +23,13 @@
 }
 .table {
   display: table;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+.border {
+  border-style: var(--tw-border-style);
+  border-width: 1px;
 }
 .filter {
   filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
@@ -243,6 +253,7 @@
 .rag-filter-pill-remove:hover {
   color: var(--text-error);
 }
+@property --tw-border-style { syntax: "*"; inherits: false; initial-value: solid; }
 @property --tw-blur { syntax: "*"; inherits: false; }
 @property --tw-brightness { syntax: "*"; inherits: false; }
 @property --tw-contrast { syntax: "*"; inherits: false; }
@@ -262,6 +273,7 @@
     ::before,
     ::after,
     ::backdrop {
+      --tw-border-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;
       --tw-contrast: initial;
