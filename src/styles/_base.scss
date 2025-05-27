@@ -1,0 +1,50 @@
+// _base.scss
+// Base styles and resets specific to the RAG plugin
+
+// Plugin-specific base styles
+.rag-chat-view-container {
+  @include flex-column;
+  height: 100%;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  gap: $spacing-md;
+}
+
+// Ensure proper box-sizing for all plugin elements
+.rag-chat-view-container *,
+.rag-chat-view-container *::before,
+.rag-chat-view-container *::after {
+  box-sizing: border-box;
+}
+
+// Base typography adjustments for plugin content
+.rag-message {
+  p {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  pre {
+    margin: 0.5em 0;
+    padding: 0.8em;
+    border-radius: $radius-medium;
+    background-color: var(--background-secondary-alt);
+    overflow-x: auto;
+  }
+  
+  code {
+    font-size: 0.9em;
+    background-color: var(--background-modifier-hover);
+    padding: 0.2em 0.4em;
+    border-radius: $radius-small;
+  }
+  
+  pre code {
+    background-color: transparent;
+    padding: 0;
+  }
+}

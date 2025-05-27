@@ -1,0 +1,52 @@
+// _chat.scss
+// Chat container and header components
+
+.rag-chat-header-controls {
+  @include flex-row;
+  justify-content: flex-end;
+  padding-bottom: 5px;
+}
+
+.rag-chat-clear-button {
+  padding: 5px 10px;
+}
+
+.rag-thinking-indicator {
+  @include flex-center;
+  padding: $spacing-md;
+  font-style: italic;
+  color: var(--text-faint);
+  height: 40px;
+}
+
+.rag-input-wrapper {
+  position: relative;
+  @include flex-row;
+  gap: $spacing-sm;
+  align-items: flex-end;
+  padding-top: 5px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.rag-chat-input {
+  flex-grow: 1;
+  min-height: $chat-input-min-height;
+  max-height: $chat-input-max-height;
+  resize: vertical;
+  padding: $spacing-md;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: $radius-medium;
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-size: var(--font-ui-medium);
+  line-height: 1.4;
+}
+
+.rag-chat-send-button {
+  min-height: $chat-input-min-height;
+  padding: 0 15px;
+
+  &:disabled {
+    @include button-disabled;
+  }
+}

@@ -1,107 +1,172 @@
-/* styles.css for Obsidian RAG Plugin Chat View */
-
+/* src/styles/main.scss */
+@layer properties;
+.sticky {
+  position: sticky;
+}
+.container {
+  width: 100%;
+}
+.block {
+  display: block;
+}
+.flex {
+  display: flex;
+}
+.hidden {
+  display: none;
+}
+.inline {
+  display: inline;
+}
+.table {
+  display: table;
+}
+.filter {
+  filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+}
 .rag-chat-view-container {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Fill available space */
-  padding: 10px;
+  height: 100%;
+  padding: 12px;
   box-sizing: border-box;
-  gap: 10px; /* Space between elements */
+  gap: 12px;
 }
-
+.rag-chat-view-container *,
+.rag-chat-view-container *::before,
+.rag-chat-view-container *::after {
+  box-sizing: border-box;
+}
+.rag-message p {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+.rag-message p:last-child {
+  margin-bottom: 0;
+}
+.rag-message pre {
+  margin: 0.5em 0;
+  padding: 0.8em;
+  border-radius: var(--radius-m, 8px);
+  background-color: var(--background-secondary-alt);
+  overflow-x: auto;
+}
+.rag-message code {
+  font-size: 0.9em;
+  background-color: var(--background-modifier-hover);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-s, 4px);
+}
+.rag-message pre code {
+  background-color: transparent;
+  padding: 0;
+}
 .rag-chat-header-controls {
   display: flex;
-  justify-content: flex-end; /* Align button to the right */
+  flex-direction: row;
+  justify-content: flex-end;
   padding-bottom: 5px;
-  /* border-bottom: 1px solid var(--background-modifier-border); */ /* Optional: remove if filter pills are enough separation */
 }
-
 .rag-chat-clear-button {
-  /* Standard button styling will apply, add specifics if needed */
   padding: 5px 10px;
 }
-
-/* Container for filter pills */
-.rag-filter-pills-container {
+.rag-thinking-indicator {
   display: flex;
-  flex-wrap: wrap; /* Allow pills to wrap to next line */
-  gap: 6px; /* Space between pills */
-  padding: 5px 0; /* Padding around the pills area */
-  margin-bottom: 5px; /* Space below pills before messages */
-  /* border-bottom: 1px solid var(--background-modifier-border); */ /* Optional separator */
-}
-
-.rag-filter-pill {
-  display: inline-flex; /* Align text and remove button nicely */
   align-items: center;
-  background-color: var(--background-modifier-accent); /* Use an accent color */
-  color: var(--text-on-accent); /* Ensure text is readable on accent */
-  padding: 4px 8px;
-  border-radius: var(--radius-s); /* Smaller radius for pills */
-  font-size: 0.85em;
-  cursor: default; /* Indicate it's not plain text */
+  justify-content: center;
+  padding: 12px;
+  font-style: italic;
+  color: var(--text-faint);
+  height: 40px;
 }
-
-.rag-filter-pill-remove {
-  margin-left: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  padding: 0 2px; /* Make it easier to click */
+.rag-input-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+  padding-top: 5px;
+  border-top: 1px solid var(--background-modifier-border);
 }
-
-.rag-filter-pill-remove:hover {
-  color: var(--text-error); /* Or a lighter/darker shade of the pill text color */
+.rag-chat-input {
+  flex-grow: 1;
+  min-height: 44px;
+  max-height: 200px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m, 8px);
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-size: var(--font-ui-medium);
+  line-height: 1.4;
 }
-
-
+.rag-chat-send-button {
+  min-height: 44px;
+  padding: 0 15px;
+}
+.rag-chat-send-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 .rag-messages-container {
-  flex-grow: 1; /* Take up available vertical space */
-  overflow-y: auto; /* Scroll for overflow */
+  flex-grow: 1;
+  overflow-y: auto;
   border: 1px solid var(--background-modifier-border);
   padding: 15px;
-  border-radius: var(--radius-m); /* Consistent Obsidian rounding */
-  background-color: var(--background-secondary); /* Slightly different background for message area */
+  border-radius: var(--radius-m, 8px);
+  background-color: var(--background-secondary);
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Space between messages */
+  gap: 12px;
 }
-
+.rag-messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+.rag-messages-container::-webkit-scrollbar-track {
+  background: var(--background-modifier-border);
+}
+.rag-messages-container::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border-hover);
+  border-radius: 3px;
+}
 .rag-message-wrapper {
   display: flex;
   flex-direction: column;
 }
-
 .rag-message-wrapper-user {
-  align-items: flex-end; /* User messages to the right */
+  align-items: flex-end;
 }
-
 .rag-message-wrapper-ai,
 .rag-message-wrapper-system {
-  align-items: flex-start; /* AI/System messages to the left */
+  align-items: flex-start;
 }
-
 .rag-message {
+  background-color: var(--background-primary-alt);
   padding: 10px 15px;
-  border-radius: var(--radius-l); /* Softer, more bubbly radius for messages */
-  max-width: 80%; /* Don't let messages get too wide */
-  word-wrap: break-word; /* Handle long words */
+  border-radius: var(--radius-l, 12px);
+  max-width: 80%;
+  word-wrap: break-word;
   line-height: 1.5;
-  box-shadow: var(--shadow-s); /* Subtle shadow for depth */
+  box-shadow: var(--shadow-s);
 }
-
 .rag-message-user {
   background-color: var(--interactive-accent);
   color: var(--text-on-accent);
-  border-bottom-right-radius: var(--radius-s); /* "Tail" effect */
+  padding: 10px 15px;
+  border-radius: var(--radius-l, 12px);
+  max-width: 80%;
+  word-wrap: break-word;
+  line-height: 1.5;
+  box-shadow: var(--shadow-s);
+  border-bottom-right-radius: var(--radius-s, 4px);
 }
-
 .rag-message-ai {
-  background-color: var(--background-primary-alt); /* Different from message container bg */
   border: 1px solid var(--background-modifier-border-hover);
   color: var(--text-normal);
-  border-bottom-left-radius: var(--radius-s); /* "Tail" effect */
+  border-bottom-left-radius: var(--radius-s, 4px);
 }
-
 .rag-message-system {
   background-color: transparent;
   color: var(--text-muted);
@@ -113,122 +178,104 @@
   border: none;
   box-shadow: none;
 }
-
-/* Styling for Markdown content within messages */
-.rag-message p {
-  margin-top: 0;
-  margin-bottom: 0.5em; /* Spacing between paragraphs in a message */
-}
-.rag-message p:last-child {
-  margin-bottom: 0;
-}
-.rag-message pre {
-  margin: 0.5em 0;
-  padding: 0.8em;
-  border-radius: var(--radius-m);
-  background-color: var(--background-secondary-alt); /* For code blocks */
-  overflow-x: auto;
-}
-.rag-message code {
-  font-size: 0.9em;
-  background-color: var(--background-modifier-hover);
-  padding: 0.2em 0.4em;
-  border-radius: var(--radius-s);
-}
-.rag-message pre code {
-  background-color: transparent; /* Code inside pre shouldn't have double bg */
-  padding: 0;
-}
-
-
-.rag-thinking-indicator {
-  display: flex; /* Used to center content if needed */
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  font-style: italic;
-  color: var(--text-faint);
-  height: 40px; /* Give it some space */
-}
-/* .rag-thinking-indicator span {
-    /* Add spinner or animation here if desired */
-/* } */
-
-
-.rag-input-wrapper {
-  display: flex;
-  gap: 8px; /* Space between textarea and button */
-  align-items: flex-end; /* Align button with bottom of textarea if it grows */
-  padding-top: 5px;
-  border-top: 1px solid var(--background-modifier-border);
-}
-
-.rag-chat-input {
-  flex-grow: 1;
-  min-height: 44px; /* Good starting height for a single line + padding */
-  max-height: 200px; /* Prevent it from getting too tall */
-  resize: vertical;
-  padding: 10px;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-m);
-  background-color: var(--background-primary);
-  color: var(--text-normal);
-  font-size: var(--font-ui-medium);
-  line-height: 1.4;
-}
-
-.rag-chat-send-button {
-  min-height: 44px; /* Match input height */
-  padding: 0 15px;
-  /* Standard button styling will apply from Obsidian theme */
-}
-
-.rag-chat-send-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* ... existing styles ... */
-
-.rag-input-wrapper {
-  position: relative; /* Needed for absolute positioning of popover */
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-  padding-top: 5px;
-  border-top: 1px solid var(--background-modifier-border);
-}
-
 .rag-suggestion-popover {
   position: absolute;
-  /* bottom: 100%; */ /* Position above the input area */
-  /* Instead of bottom, let's try to position it based on inputArea's top + height in JS */
-  /* left: 0; */
   background-color: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-m, 8px);
   box-shadow: var(--shadow-l);
-  z-index: 100; /* Ensure it's above other elements */
-  max-height: 200px; /* Limit height */
+  z-index: 100;
+  max-height: 200px;
   overflow-y: auto;
-  width: 100%; /* Match input area width, or set dynamically */
+  width: 100%;
 }
-
+.rag-suggestion-popover::-webkit-scrollbar {
+  width: 6px;
+}
+.rag-suggestion-popover::-webkit-scrollbar-track {
+  background: var(--background-modifier-border);
+}
+.rag-suggestion-popover::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border-hover);
+  border-radius: 3px;
+}
 .rag-suggestion-item {
   padding: 8px 12px;
   cursor: pointer;
   border-bottom: 1px solid var(--background-modifier-border-hover);
+  transition: background-color 150ms ease;
+}
+.rag-suggestion-item:hover {
+  background-color: var(--background-modifier-hover);
 }
 .rag-suggestion-item:last-child {
   border-bottom: none;
 }
-
-.rag-suggestion-item:hover {
-  background-color: var(--background-modifier-hover);
-}
-
 .rag-suggestion-item.is-selected {
-	  background-color: var(--interactive-accent);
-  /* background-color: var(--background-modifier-accent-hover); Or var(--interactive-accent) with adjusted text color */
-  /* color: var(--text-on-accent); Ensure text is readable */
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
 }
+.rag-filter-pills-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px 0;
+  margin-bottom: 5px;
+}
+.rag-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--background-modifier-accent);
+  color: var(--text-on-accent);
+  padding: 4px 8px;
+  border-radius: var(--radius-s, 4px);
+  font-size: 0.85em;
+  cursor: default;
+}
+.rag-filter-pill-remove {
+  margin-left: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0 2px;
+  transition: color 150ms ease;
+}
+.rag-filter-pill-remove:hover {
+  color: var(--text-error);
+}
+@property --tw-blur { syntax: "*"; inherits: false; }
+@property --tw-brightness { syntax: "*"; inherits: false; }
+@property --tw-contrast { syntax: "*"; inherits: false; }
+@property --tw-grayscale { syntax: "*"; inherits: false; }
+@property --tw-hue-rotate { syntax: "*"; inherits: false; }
+@property --tw-invert { syntax: "*"; inherits: false; }
+@property --tw-opacity { syntax: "*"; inherits: false; }
+@property --tw-saturate { syntax: "*"; inherits: false; }
+@property --tw-sepia { syntax: "*"; inherits: false; }
+@property --tw-drop-shadow { syntax: "*"; inherits: false; }
+@property --tw-drop-shadow-color { syntax: "*"; inherits: false; }
+@property --tw-drop-shadow-alpha { syntax: "<percentage>"; inherits: false; initial-value: 100%; }
+@property --tw-drop-shadow-size { syntax: "*"; inherits: false; }
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *,
+    ::before,
+    ::after,
+    ::backdrop {
+      --tw-blur: initial;
+      --tw-brightness: initial;
+      --tw-contrast: initial;
+      --tw-grayscale: initial;
+      --tw-hue-rotate: initial;
+      --tw-invert: initial;
+      --tw-opacity: initial;
+      --tw-saturate: initial;
+      --tw-sepia: initial;
+      --tw-drop-shadow: initial;
+      --tw-drop-shadow-color: initial;
+      --tw-drop-shadow-alpha: 100%;
+      --tw-drop-shadow-size: initial;
+    }
+  }
+}
+/*! tailwindcss v4.1.7 | MIT License | https://tailwindcss.com */

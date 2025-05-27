@@ -1,0 +1,18 @@
+// main.scss
+// Main SCSS entry point for the Obsidian RAG Plugin
+
+// Tailwind CSS directives
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Import foundation files
+@import 'variables';
+@import 'mixins';
+@import 'base';
+
+// Import component styles
+@import 'components/chat';
+@import 'components/messages';
+@import 'components/suggestions';
+@import 'components/filters';

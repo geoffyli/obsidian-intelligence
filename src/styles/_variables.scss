@@ -1,0 +1,34 @@
+// _variables.scss
+// Custom SCSS variables that work with Obsidian's CSS custom properties
+
+// Spacing system
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+// Border radius (using Obsidian values as fallback)
+$radius-small: var(--radius-s, 4px);
+$radius-medium: var(--radius-m, 8px);
+$radius-large: var(--radius-l, 12px);
+
+// Z-index layers
+$z-index-suggestion-popover: 100;
+$z-index-modal: 200;
+
+// Chat-specific variables
+$chat-message-max-width: 80%;
+$chat-input-min-height: 44px;
+$chat-input-max-height: 200px;
+$suggestion-popover-max-height: 200px;
+
+// Transition durations
+$transition-fast: 150ms;
+$transition-normal: 250ms;
+
+// Component-specific sizes
+$filter-pill-padding-x: 8px;
+$filter-pill-padding-y: 4px;
+$message-padding: 10px 15px;
+$suggestion-item-padding: 8px 12px;

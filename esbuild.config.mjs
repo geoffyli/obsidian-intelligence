@@ -1,6 +1,10 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
+import { sassPlugin } from "esbuild-sass-plugin";
+import postcss from "postcss";
+import tailwindcss from "@tailwindcss/postcss";
+import autoprefixer from "autoprefixer";
 
 const banner =
 `/*
@@ -39,11 +43,41 @@ const context = await esbuild.context({
 	treeShaking: true,
 	outfile: "main.js",
 	minify: prod,
+	plugins: [
+		sassPlugin({
+			type: "css-text",
+			filter: /\.scss$/,
+		})
+	],
+});
+
+// Build SCSS separately to generate styles.css with Tailwind processing
+const cssContext = await esbuild.context({
+	entryPoints: ["src/styles/main.scss"],
+	bundle: true,
+	outfile: "styles.css",
+	plugins: [
+		sassPlugin({
+			type: "css",
+			filter: /\.scss$/,
+			async transform(source, dir) {
+				const { css } = await postcss([
+					tailwindcss,
+					autoprefixer
+				]).process(source, { from: undefined });
+				return css;
+			}
+		})
+	],
+	logLevel: "info",
+	minify: prod,
 });
 
 if (prod) {
 	await context.rebuild();
+	await cssContext.rebuild();
 	process.exit(0);
 } else {
 	await context.watch();
+	await cssContext.watch();
 }

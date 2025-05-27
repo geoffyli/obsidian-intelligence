@@ -1,0 +1,53 @@
+// _messages.scss
+// Message container and message styling
+
+.rag-messages-container {
+  flex-grow: 1;
+  @include scrollable;
+  border: 1px solid var(--background-modifier-border);
+  padding: 15px;
+  border-radius: $radius-medium;
+  background-color: var(--background-secondary);
+  @include flex-column;
+  gap: $spacing-md;
+}
+
+.rag-message-wrapper {
+  @include flex-column;
+  
+  &-user {
+    align-items: flex-end;
+  }
+  
+  &-ai,
+  &-system {
+    align-items: flex-start;
+  }
+}
+
+.rag-message {
+  @include message-bubble(var(--background-primary-alt));
+  
+  &-user {
+    @include message-bubble(var(--interactive-accent), var(--text-on-accent));
+    border-bottom-right-radius: $radius-small;
+  }
+  
+  &-ai {
+    border: 1px solid var(--background-modifier-border-hover);
+    color: var(--text-normal);
+    border-bottom-left-radius: $radius-small;
+  }
+  
+  &-system {
+    background-color: transparent;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    font-size: 0.9em;
+    padding: 5px;
+    max-width: 100%;
+    border: none;
+    box-shadow: none;
+  }
+}
