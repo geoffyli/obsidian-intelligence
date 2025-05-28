@@ -1,10 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./src/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx,svelte,html}",
     "./src/**/*.scss"
   ],
-  prefix: 'tw-', // Prevent conflicts with Obsidian styles
   corePlugins: {
     preflight: false, // Disable reset to preserve Obsidian styles
   },

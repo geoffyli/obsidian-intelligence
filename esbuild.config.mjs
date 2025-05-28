@@ -3,7 +3,7 @@ import process from "process";
 import builtins from "builtin-modules";
 import { sassPlugin } from "esbuild-sass-plugin";
 import postcss from "postcss";
-import tailwindcss from "@tailwindcss/postcss";
+import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
 import sveltePlugin from "esbuild-svelte";
 import sveltePreprocess from "svelte-preprocess";
@@ -45,6 +45,7 @@ const context = await esbuild.context({
 	treeShaking: true,
 	outfile: "main.js",
 	minify: prod,
+	conditions: ["svelte", "browser", "import"],
 	plugins: [
 		sassPlugin({
 			type: "css-text",
@@ -83,9 +84,12 @@ const cssContext = await esbuild.context({
             filter: /\.scss$/,
             async transform(source, dir) {
                 const { css } = await postcss([
-                    tailwindcss, // This should be the tailwindcss function
+                    tailwindcss, // Use Tailwind v3
                     autoprefixer,
-                ]).process(source, { from: undefined /* or a relevant path if needed by postcss plugins */ });
+                ]).process(source, { 
+                    from: dir + '/main.scss',
+                    to: './styles.css'
+                });
                 return css;
             },
         }),
