@@ -5,7 +5,7 @@ import SettingsTabComponent from "./SettingsTab.svelte";
 
 export class RAGSettingsTab extends PluginSettingTab {
 	plugin: ObsidianRAGPlugin;
-	private svelteComponent: any = null;
+	private svelteComponent: SettingsTabComponent | null = null;
 
 	constructor(app: App, plugin: ObsidianRAGPlugin) {
 		super(app, plugin);
