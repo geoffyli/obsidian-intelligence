@@ -2,25 +2,27 @@
   import { onMount, onDestroy } from 'svelte';
   import type ObsidianRAGPlugin from '../main';
   import { Notice } from 'obsidian';
+  import { Input } from '$lib/components/ui/input';
+  import { Label } from '$lib/components/ui/label';
+  import * as Popover from "$lib/components/ui/popover/index.js";
+  import { Button } from "$lib/components/ui/button/index.js";
 
   // Props: The plugin instance is passed from RAGSettingsTab.ts
-  let { plugin = $bindable() }: { plugin?: ObsidianRAGPlugin } = $props();
+  export let plugin: ObsidianRAGPlugin | undefined = undefined;
 
   // State variables to hold settings values
-  let openAIApiKeyValue = $state('');
-  let mySettingValue = $state('');
+  let openAIApiKeyValue = '';
+  let mySettingValue = '';
 
-  // Effect to update values when plugin becomes available
-  $effect(() => {
-    if (plugin && plugin.settings) {
-      openAIApiKeyValue = plugin.settings.openAIApiKey || '';
-      mySettingValue = plugin.settings.mySetting || '';
-    }
-  });
+  // Reactive statement to update values when plugin becomes available
+  $: if (plugin && plugin.settings) {
+    openAIApiKeyValue = plugin.settings.openAIApiKey || '';
+    mySettingValue = plugin.settings.mySetting || '';
+  }
 
   // Lifecycle function: onMount is called after the component is first rendered
   onMount(() => {
-    // Values are now handled by the effect above
+    // Values are now handled by the reactive statement above
   });
 
   // Function to handle API key changes and save on blur
@@ -43,10 +45,6 @@
     await plugin.saveSettings();
   }
 
-  // Debounce function to prevent saving on every keystroke for API key
-  // (Alternative to on:blur if live update without immediate save is needed for API key input)
-  // For simplicity, we'll stick to the on:blur behavior as in the original code.
-
   // onDestroy can be used for cleanup if needed
   onDestroy(() => {
     // console.log("SettingsTab.svelte component destroyed");
@@ -55,65 +53,44 @@
 
 {#if plugin && plugin.settings}
 <div class="obsidian-rag-settings-container p-6 space-y-6 max-w-4xl">
-  <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-gray-700 pb-3">
-    Obsidian RAG Settings
-  </h2>
-
-  <!-- OpenAI API Key Card -->
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
-    <div class="space-y-4">
-      <div>
-        <label for="openai-api-key" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          OpenAI API Key
-        </label>
-        <input
+  <!-- OpenAI API Key -->
+      <div class="space-y-2">
+        <Label for="openai-api-key">OpenAI API Key</Label>
+        <Input
           id="openai-api-key"
           type="password"
           placeholder="sk-..."
           bind:value={openAIApiKeyValue}
-          onblur={handleApiKeyBlur}
-          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+          on:blur={handleApiKeyBlur}
         />
-        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-muted-foreground">
           Enter your OpenAI API key. Changes are saved when you click away (on blur).
         </p>
       </div>
-    </div>
-  </div>
 
   <!-- My Original Setting Card -->
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
-    <div class="space-y-4">
-      <div>
-        <label for="my-setting" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          My Original Setting
-        </label>
-        <input
+      <div class="space-y-2">
+        <Label for="my-setting">My Original Setting</Label>
+        <Input
           id="my-setting"
           type="text"
           placeholder="Enter your secret"
           value={mySettingValue}
-          oninput={handleMySettingChange}
-          class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
+          on:input={handleMySettingChange}
         />
-        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-muted-foreground">
           It's a secret (original setting example). Saved on change.
         </p>
       </div>
-    </div>
+  <div class="text-sm text-muted-foreground mt-6">
+	<p>
+	  These settings are saved automatically when you change them. The plugin will re-initialize with the new settings.
+	</p>
   </div>
 </div>
 {:else}
 <div class="obsidian-rag-settings-container p-6">
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
-    <p class="text-center text-gray-700 dark:text-gray-300">Loading settings...</p>
-  </div>
+      <p class="text-center text-muted-foreground">Loading settings...</p>
 </div>
 {/if}
 
-<style>
-  /* Tailwind-based Flowbite-style components */
-  .obsidian-rag-settings-container {
-    max-width: 800px;
-  }
-</style>

@@ -58,7 +58,6 @@ const context = await esbuild.context({
                 }
             }),
             compilerOptions: {
-                runes: true,
                 dev: !prod,
                 css: 'injected',
                 generate: 'dom',

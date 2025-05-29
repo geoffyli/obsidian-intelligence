@@ -3,7 +3,9 @@
 		"baseUrl": ".",
 		"paths": {
 			// Allows absolute imports from the 'src' directory
-			"@/*": ["src/*"]
+			"@/*": ["src/*"],
+			"$lib": ["src/lib"],
+			"$lib/*": ["src/lib/*"]
 		},
 		"inlineSourceMap": true,
 		"inlineSources": true,

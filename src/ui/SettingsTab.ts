@@ -1,7 +1,7 @@
 import { App, PluginSettingTab } from "obsidian";
 import ObsidianRAGPlugin from "../main";
 import SettingsTabComponent from "./SettingsTab.svelte";
-import { mount, unmount } from "svelte";
+// Svelte 4 uses component constructor for mounting
 
 export class RAGSettingsTab extends PluginSettingTab {
 	plugin: ObsidianRAGPlugin;
@@ -35,8 +35,8 @@ export class RAGSettingsTab extends PluginSettingTab {
             // }
         }
 		
-		// Mount the Svelte 5 component
-		this.svelteComponent = mount(SettingsTabComponent, {
+		// Mount the Svelte 4 component
+		this.svelteComponent = new SettingsTabComponent({
 			target: containerEl,
 			props: {
 				plugin: this.plugin,
@@ -48,8 +48,8 @@ export class RAGSettingsTab extends PluginSettingTab {
 	// This is good practice for preventing memory leaks, though Svelte is often good at cleanup.
 	hide(): void {
 		if (this.svelteComponent) {
-			// In Svelte 5, use unmount function to clean up
-			unmount(this.svelteComponent);
+			// In Svelte 4, use $destroy method to clean up
+			this.svelteComponent.$destroy();
 			this.svelteComponent = null;
 		}
 		// containerEl is automatically emptied by Obsidian when the tab is re-displayed or closed.
