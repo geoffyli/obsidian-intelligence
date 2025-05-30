@@ -52,7 +52,7 @@
 </script>
 
 {#if plugin && plugin.settings}
-<div class="obsidian-rag-settings-container p-6 space-y-6 max-w-4xl">
+<div class="obsidian-rag-plugin my-plugin-root obsidian-rag-settings-container p-6 space-y-6 max-w-4xl">
   <!-- OpenAI API Key -->
       <div class="space-y-2">
         <Label for="openai-api-key">OpenAI API Key</Label>
@@ -89,7 +89,7 @@
   </div>
 </div>
 {:else}
-<div class="obsidian-rag-settings-container p-6">
+<div class="obsidian-rag-plugin my-plugin-root obsidian-rag-settings-container p-6">
       <p class="text-center text-muted-foreground">Loading settings...</p>
 </div>
 {/if}

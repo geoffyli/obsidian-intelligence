@@ -2,7 +2,9 @@
 	import { MarkdownRenderer } from "obsidian";
 	import { onMount, tick } from "svelte";
 	import { Button } from "$lib/components/ui/button";
+	import * as Menubar from "$lib/components/ui/menubar";
 	import { Card, CardContent } from "$lib/components/ui/card"; // Import shadcn-svelte Card components
+	import { Textarea } from "$lib/components/ui/textarea/index.js";
 	import type { App, TFile, MarkdownRenderer } from "obsidian";
 	import type ObsidianRAGPlugin from "../main";
 	import type { UIMessage, LangChainChatMessage } from "../types";
@@ -34,7 +36,7 @@
 	// }
 
 	let messagesContainer: HTMLDivElement;
-	let inputArea: HTMLTextAreaElement;
+	let inputArea: Textarea;
 	let suggestionPopover: HTMLDivElement;
 	let chatHistory: LangChainChatMessage[] = [];
 	let uiMessages: DisplayMessage[] = []; // For displaying messages in the UI
@@ -587,8 +589,9 @@
 	// and listeners are attached directly to links.
 </script>
 
-<div class="rag-chat-view-container h-full flex flex-col">
-	<div class="rag-chat-header-controls p-4 border-b">
+<div class="obsidian-rag-plugin my-plugin-root rag-chat-view-container h-full flex flex-col">
+	<!-- Header with controls -->
+	<div class="rag-chat-header-controls p-4">
 		<Button
 			variant="outline"
 			size="sm"
@@ -600,6 +603,7 @@
 		</Button>
 	</div>
 
+	<!-- Message Container-->
 	<div
 		class="rag-messages-container flex-1 overflow-y-auto p-4 space-y-4"
 		bind:this={messagesContainer}
@@ -615,14 +619,14 @@
 					: 'justify-start'}"
 			>
 				<Card
-					class="w-fit max-w-[85%] md:max-w-[75%] rounded-lg shadow-sm 
+					class="message-card max-w-[85%] md:max-w-[75%] rounded-lg shadow-sm
                     {message.sender === 'user'
 						? 'bg-primary text-primary-foreground rounded-br-none'
 						: message.sender === 'ai'
 							? 'bg-muted text-muted-foreground rounded-bl-none'
-							: 'bg-secondary text-secondary-foreground w-full max-w-full text-center py-2'}"
+							: 'bg-secondary text-secondary-foreground text-center py-2'}"
 				>
-					<CardContent class="p-3 text-sm leading-relaxed">
+					<CardContent class="text-sm leading-relaxed">
 						<div
 							use:renderMarkdownAction={{
 								text: message.text,
@@ -637,6 +641,7 @@
 		{/each}
 	</div>
 
+	<!-- Status indicator -->
 	{#if isThinking}
 		<div
 			class="rag-thinking-indicator p-4 text-center text-muted-foreground"
@@ -647,30 +652,32 @@
 		</div>
 	{/if}
 
-	<div class="rag-input-wrapper p-4 border-t relative">
-		<div class="flex items-end gap-2">
-			<div class="flex-1 relative">
-				<textarea
+	<!-- Text area and send button -->
+	<div class="rag-input-wrapper relative pt-2">
+		<div class="flex items-stretch gap-2">
+			<div class="input-area flex-1 relative">
+				<Textarea
 					bind:this={inputArea}
 					bind:value={inputValue}
+					bind:textareaRef={inputArea}
 					on:input={handleInput}
 					on:keydown={handleKeyDown}
-					placeholder="Type message or filter keyword (e.g., 'tag:', 'created:')"
-					class="w-full min-h-[60px] max-h-[200px] p-3 border border-input bg-background text-foreground rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+					placeholder="Type message or filter keyword"
+					class="w-full p-3 border bg-background text-foreground rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
 					disabled={isThinking}
 					aria-label="Chat input"
 					aria-autocomplete="list"
 					aria-haspopup={isSuggesting && currSuggestions.length > 0
-						? "listbox"
-						: "false"}
+						? 'listbox'
+						: 'false'}
 					aria-controls={isSuggesting && currSuggestions.length > 0
-						? "suggestion-popover-list"
+						? 'suggestion-popover-list'
 						: undefined}
 					aria-activedescendant={isSuggesting &&
 					activeSuggestionIndex !== -1
 						? `suggestion-item-${activeSuggestionIndex}`
 						: undefined}
-				></textarea>
+				></Textarea>
 
 				{#if isSuggesting && currSuggestions.length > 0}
 					<div
@@ -700,15 +707,17 @@
 					</div>
 				{/if}
 			</div>
-
-			<Button
-				on:click={handleSendMessage}
-				disabled={isThinking || !inputValue.trim()}
-				class="rag-chat-send-button self-end"
-				aria-label="Send message"
-			>
-				Send
-			</Button>
+			<div class="control-area flex-shrink-0">
+				<Button
+					variant="outline"
+					on:click={handleSendMessage}
+					disabled={isThinking || !inputValue.trim()}
+					class="rag-chat-send-button self-end w-28"
+					aria-label="Send message"
+				>
+					Send
+				</Button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -720,46 +729,19 @@
 		flex-direction: column;
 		background-color: hsl(var(--background));
 	}
-
+	.rag-messages-container {
+		/* Apply border settings */
+		background-color: hsl(var(--card));
+		border: 1px solid hsl(var(--border));
+		border-radius: 0.5rem;
+	}
+	/*
 	.rag-chat-header-controls {
 		background-color: hsl(var(--card));
 	}
-
-	.rag-messages-container {
-		flex: 1;
-		overflow-y: auto;
-		padding: 1rem; /* Consistent padding */
-		/* space-y-4 applied directly in class for Tailwind */
-	}
-
-	/* Global styles for markdown rendered content if needed, e.g., code blocks */
-	:global(.rag-messages-container .markdown-rendered-content pre) {
-		/* Example: Style for code blocks inside messages */
-		background-color: hsl(var(--muted-foreground) / 0.1);
-		padding: 0.75rem;
-		border-radius: 0.375rem; /* rounded-md */
-		overflow-x: auto;
-	}
-	:global(.rag-messages-container .markdown-rendered-content p:last-child) {
-		margin-bottom: 0; /* Remove extra margin from last p in card */
-	}
-
-	/* Ensure links within messages are styled for visibility and interaction */
-	:global(.rag-messages-container a.internal-link) {
-		color: hsl(var(--link-foreground));
-		text-decoration: underline;
-		cursor: pointer;
-	}
-	:global(.rag-messages-container a.internal-link:hover),
-	:global(.rag-messages-container a.internal-link:focus) {
-		color: hsl(var(--link-hover-foreground));
-		text-decoration: none;
-		outline: 2px solid hsl(var(--focus-ring));
-	}
-
+*/
 	.rag-input-wrapper {
 		background-color: hsl(var(--card));
-		border-top: 1px solid hsl(var(--border));
 	}
 
 	.rag-suggestion-item {
@@ -771,13 +753,5 @@
 
 	.rag-thinking-indicator {
 		color: hsl(var(--muted-foreground));
-	}
-
-	.rag-input-wrapper textarea {
-		line-height: 1.5;
-	}
-	.rag-chat-send-button {
-		min-height: 60px;
-		height: auto;
 	}
 </style>

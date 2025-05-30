@@ -92,7 +92,9 @@ export default class ObsidianRAGPlugin extends Plugin {
 		}
 
 		// If not, create a new leaf in the right sidebar (or preferred location)
-		const leaf = this.app.workspace.getRightLeaf(false);
+		// const leaf = this.app.workspace.getRightLeaf(false);
+		// Get a new leaf in the main workspace area
+		const leaf = this.app.workspace.getLeaf(true); // true to create a new leaf if none exists
 		if (leaf) {
 			await leaf.setViewState({
 				type: VIEW_TYPE_RAG_CHAT,
