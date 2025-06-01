@@ -1,0 +1,52 @@
+{
+  "name": "obsidian-rag-plugin",
+  "version": "1.0.0",
+  "description": "This is a rag plugin for Obsidian (https://obsidian.md)",
+  "main": "main.js",
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:*",
+    "dev:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --watch",
+    "dev:esbuild": "node esbuild.config.mjs",
+    "build": "npm run build:tailwind && npm run build:esbuild",
+    "build:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --minify",
+    "build:esbuild": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "test": "jest",
+    "check": "tsc -noEmit -skipLibCheck"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^16.11.6",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "5.29.0",
+    "@typescript-eslint/parser": "5.29.0",
+    "autoprefixer": "^10.4.16",
+    "builtin-modules": "3.3.0",
+    "esbuild": "^0.17.3",
+    "jest": "^29.7.0",
+    "jest-environment-obsidian": "^0.0.1",
+    "jest-extended": "^4.0.2",
+    "npm-run-all": "^4.1.5",
+    "obsidian": "latest",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "ts-jest": "^29.3.4",
+    "ts-node": "^10.9.2",
+    "tslib": "2.4.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.43",
+    "@langchain/core": "^0.3.57",
+    "@langchain/openai": "^0.5.10",
+    "axios": "^1.3.4",
+    "dotenv": "^16.0.3",
+    "langchain": "^0.3.26",
+    "obsidian-community-lib": "^2.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

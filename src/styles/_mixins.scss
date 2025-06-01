@@ -1,0 +1,86 @@
+// // _mixins.scss
+// // Reusable SCSS mixins for common patterns
+
+// // Flexbox utilities
+// @mixin flex-center {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+
+// @mixin flex-column {
+//   display: flex;
+//   flex-direction: column;
+// }
+
+// @mixin flex-row {
+//   display: flex;
+//   flex-direction: row;
+// }
+
+// // Button states
+// @mixin button-disabled {
+//   opacity: 0.7;
+//   cursor: not-allowed;
+//   pointer-events: none;
+// }
+
+// // Scrollable container
+// @mixin scrollable {
+//   overflow-y: auto;
+  
+//   &::-webkit-scrollbar {
+//     width: 6px;
+//   }
+  
+//   &::-webkit-scrollbar-track {
+//     background: var(--background-modifier-border);
+//   }
+  
+//   &::-webkit-scrollbar-thumb {
+//     background: var(--background-modifier-border-hover);
+//     border-radius: 3px;
+//   }
+// }
+
+// // Card-like appearance
+// @mixin card($padding: $spacing-lg) {
+//   background-color: var(--background-secondary);
+//   border: 1px solid var(--background-modifier-border);
+//   border-radius: $radius-medium;
+//   padding: $padding;
+//   box-shadow: var(--shadow-s);
+// }
+
+// // Interactive hover effects
+// @mixin hover-interactive {
+//   transition: background-color $transition-fast ease;
+  
+//   &:hover {
+//     background-color: var(--background-modifier-hover);
+//   }
+// }
+
+// // Message bubble styling
+// @mixin message-bubble($bg-color, $text-color: null) {
+//   background-color: $bg-color;
+//   @if $text-color {
+//     color: $text-color;
+//   }
+//   padding: $message-padding;
+//   border-radius: $radius-large;
+//   max-width: $chat-message-max-width;
+//   word-wrap: break-word;
+//   line-height: 1.5;
+//   box-shadow: var(--shadow-s);
+// }
+
+// // Absolute positioning for popover
+// @mixin popover-positioning {
+//   position: absolute;
+//   background-color: var(--background-secondary);
+//   border: 1px solid var(--background-modifier-border);
+//   border-radius: $radius-medium;
+//   box-shadow: var(--shadow-l);
+//   z-index: $z-index-suggestion-popover;
+// }
