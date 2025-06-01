@@ -4,9 +4,7 @@
   "description": "This is a rag plugin for Obsidian (https://obsidian.md)",
   "main": "main.js",
   "scripts": {
-    "dev": "npm-run-all --parallel dev:*",
-    "dev:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --watch",
-    "dev:esbuild": "node esbuild.config.mjs",
+    "dev": "obsidian-plugin dev --with-stylesheet styles.css src/main.ts",
     "build": "npm run build:tailwind && npm run build:esbuild",
     "build:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --minify",
     "build:esbuild": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
