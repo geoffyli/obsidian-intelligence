@@ -2,69 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add a scoped layer for your custom styles */
+/* Custom component styles */
 @layer components {
-  .obsidian-rag-plugin {
-    /* Custom styles for Obsidian integration */
-    .rag-chat-view-container {
-      @apply h-full flex flex-col bg-primary;
-    }
+  /* Chat view styles */
+  .intelligence-chat-view-container {
+    @apply h-full flex flex-col bg-primary;
+  }
 
-    .rag-messages-container {
-      @apply flex-1 overflow-y-auto p-4 space-y-4;
-      @apply bg-secondary border border-border rounded-md;
-    }
+  .intelligence-messages-container {
+    @apply flex-1 overflow-y-auto p-4 space-y-4;
+    @apply bg-secondary border border-border rounded-md;
+  }
 
-    .rag-message-user {
-      @apply bg-accent text-white rounded-lg rounded-br-none;
-    }
+  .intelligence-message-user {
+    @apply bg-accent text-white rounded-lg rounded-br-none;
+  }
 
-    .rag-message-ai {
-      @apply bg-secondary text-normal rounded-lg rounded-bl-none;
-      @apply border border-border;
-    }
+  .intelligence-message-ai {
+    @apply bg-secondary text-normal rounded-lg rounded-bl-none;
+    @apply border border-border;
+  }
 
-    .rag-message-system {
-      @apply bg-secondary text-muted text-center;
-      @apply border border-border rounded-md;
-    }
+  .intelligence-message-system {
+    @apply bg-secondary text-muted text-center;
+    @apply border border-border rounded-md;
+  }
 
-    .rag-input-area {
-      @apply w-full p-3 bg-primary text-normal;
-      @apply border border-border rounded-md;
-      @apply focus:outline-none focus:ring-2 focus:ring-accent;
-    }
+  .intelligence-input-area {
+    @apply w-full p-3 bg-primary text-normal;
+    @apply border border-border rounded-md;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent;
+  }
 
-    .rag-suggestion-item {
-      @apply w-full text-left p-2 text-sm cursor-pointer rounded-md;
-      @apply hover:bg-secondary transition-colors;
-    }
+  .intelligence-suggestion-item {
+    @apply w-full text-left p-2 text-sm cursor-pointer rounded-md;
+    @apply hover:bg-secondary transition-colors;
+  }
 
-    .rag-suggestion-item.active {
-      @apply bg-accent text-white;
-    }
+  .intelligence-suggestion-item.active {
+    @apply bg-accent text-white;
+  }
 
-    /* Settings styles */
-    .rag-settings-container {
-      @apply p-6 space-y-6 max-w-4xl;
-    }
+  /* Settings styles */
+  .intelligence-settings-container {
+    @apply p-6 space-y-6 max-w-4xl;
+  }
 
-    .rag-settings-field {
-      @apply space-y-2;
-    }
+  .intelligence-settings-field {
+    @apply space-y-2;
+  }
 
-    .rag-settings-label {
-      @apply text-sm font-medium text-normal;
-    }
+  .intelligence-settings-label {
+    @apply text-sm font-medium text-normal;
+  }
 
-    .rag-settings-input {
-      @apply w-full p-2 bg-primary text-normal;
-      @apply border border-border rounded-md;
-      @apply focus:outline-none focus:ring-2 focus:ring-accent;
-    }
+  .intelligence-settings-input {
+    @apply w-full p-2 bg-primary text-normal;
+    @apply border border-border rounded-md;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent;
+  }
 
-    .rag-settings-description {
-      @apply text-sm text-muted;
-    }
+  .intelligence-settings-description {
+    @apply text-sm text-muted;
   }
 }

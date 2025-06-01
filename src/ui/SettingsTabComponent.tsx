@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Notice } from "obsidian";
-import ObsidianRAGPlugin from "../main";
+import IntelligencePlugin from "../main";
 
 interface SettingsTabComponentProps {
-	plugin: ObsidianRAGPlugin;
+	plugin: IntelligencePlugin;
 }
 
 const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
@@ -44,7 +44,7 @@ const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
 
 	if (!plugin || !plugin.settings) {
 		return (
-			<div className="rag-settings-container">
+			<div className="intelligence-settings-container">
 				<p className="text-center text-text-muted">
 					Loading settings...
 				</p>
@@ -53,12 +53,12 @@ const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
 	}
 
 	return (
-		<div className="obsidian-rag-plugin">
-			<div className="rag-settings-container">
-				<div className="rag-settings-field">
+		<div className="obsidian-intelligence">
+			<div className="intelligence-settings-container">
+				<div className="intelligence-settings-field">
 					<label
 						htmlFor="openai-api-key"
-						className="rag-settings-label"
+						className="intelligence-settings-label"
 					>
 						OpenAI API Key
 					</label>
@@ -69,16 +69,19 @@ const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
 						value={openAIApiKeyValue}
 						onChange={(e) => setOpenAIApiKeyValue(e.target.value)}
 						onBlur={handleApiKeyBlur}
-						className="rag-settings-input"
+						className="intelligence-settings-input"
 					/>
-					<p className="rag-settings-description">
+					<p className="intelligence-settings-description">
 						Enter your OpenAI API key. Changes are saved when you
 						click away (on blur).
 					</p>
 				</div>
 
-				<div className="rag-settings-field">
-					<label htmlFor="my-setting" className="rag-settings-label">
+				<div className="intelligence-settings-field">
+					<label
+						htmlFor="my-setting"
+						className="intelligence-settings-label"
+					>
 						My Original Setting
 					</label>
 					<input
@@ -87,16 +90,16 @@ const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
 						placeholder="Enter your secret"
 						value={mySettingValue}
 						onChange={handleMySettingChange}
-						className="rag-settings-input"
+						className="intelligence-settings-input"
 					/>
-					<p className="rag-settings-description">
+					<p className="intelligence-settings-description">
 						It's a secret (original setting example). Saved on
 						change.
 					</p>
 				</div>
 
 				<div className="mt-6">
-					<p className="rag-settings-description">
+					<p className="intelligence-settings-description">
 						These settings are saved automatically when you change
 						them. The plugin will re-initialize with the new
 						settings.

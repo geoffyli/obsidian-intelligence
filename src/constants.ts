@@ -38,7 +38,8 @@ export const ANSWER_GENERATION_PROMPT = `You are an AI assistant for Obsidian. A
 	Here is the context from the user's notes:\n \
 	<context>\n{context}\n</context>\n `;
 
-export const CHATVIEW_WELCOME_MESSAGE = "Welcome to RAG Chat! Ask questions about your vault.";
+export const CHATVIEW_WELCOME_MESSAGE =
+	"Welcome to Obsidian Intelligence! Ask questions about your vault.";
 
 export const EMPTY_INDEX_ERROR_MESSAGE =
 	"Copilot index does not exist. Please index your vault first!\n\n1. Set a working embedding model in QA settings. If it's not a local model, don't forget to set the API key. \n\n2. Click 'Refresh Index for Vault' and wait for indexing to complete. If you encounter the rate limiting error, please turn your request per second down in QA setting.";
@@ -136,26 +137,16 @@ export enum DEFAULT_OPEN_AREA {
 }
 
 export const COMMAND_IDS = {
-	OPEN_RAG_CHAT: "open-rag-chat-view", // New command to open the dedicated chat view
-	REINDEX_VAULT_RAG: "reindex-vault-rag", // Your existing re-index command
+	OPEN_INTELLIGENCE_CHAT: "open-intelligence-chatview", // New command to open the dedicated chat view
+	REINDEX_VAULT_INTELLIGENCE: "reindex-vault-intelligence", // Your existing re-index command
 	// other command IDs
 };
 
 export const COMMAND_NAMES: Record<string, string> = {
-	"open-rag-chat-view": "Open RAG Chat",
-	"reindex-vault-rag": "Re-initialize RAG (Re-index Vault)",
+	"open-intelligence-chatview": "Open Intelligence Chat",
+	"reindex-vault-intelligence": "Re-initialize Intelligence (Reindex Vault)",
 	// other command names
 };
 
-export const VIEW_TYPE_RAG_CHAT = "obsidian-rag-chat-view"; // Unique view type for your chat
-
-// export const EVENT_NAMES = {
-//   CHAT_IS_VISIBLE: "chat-is-visible",
-//   ACTIVE_LEAF_CHANGE: "active-leaf-change",
-// };
-
-// export enum ABORT_REASON {
-//   USER_STOPPED = "user-stopped",
-//   NEW_CHAT = "new-chat",
-// }
+export const VIEW_TYPE_INTELLIGENCE_CHAT = "obsidian-intelligence-chat-view"; // Unique view type for your chat
 

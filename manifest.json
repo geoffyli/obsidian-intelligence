@@ -1,9 +1,9 @@
 {
-	"id": "obsidian-rag-plugin",
-	"name": "Obsidian RAG Plugin",
+	"id": "obsidian-intelligence",
+	"name": "Obsidian Intelligence",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API with RAG.",
+	"description": "This is a LLM agent plugin for Obsidian (https://obsidian.md)",
 	"author": "Geoff Li",
 	"authorUrl": "https://github.com/geoffyli",
 	"isDesktopOnly": false

@@ -1,18 +1,18 @@
+import { Notice, Plugin, WorkspaceLeaf } from "obsidian";
 import {
-	Notice,
-	Plugin,
-	WorkspaceLeaf,
-} from "obsidian";
-import { COMMAND_IDS, COMMAND_NAMES, VIEW_TYPE_RAG_CHAT } from "./constants";
+	COMMAND_IDS,
+	COMMAND_NAMES,
+	VIEW_TYPE_INTELLIGENCE_CHAT,
+} from "./constants";
 import { DEFAULT_SETTINGS } from "./types";
-import type { ObsidianRAGPluginSettings } from "./types";
-import { RAGSettingsTab } from "./ui/SettingsTab";
-import { RAGService } from "./ragService";
+import type { IntelligencePluginSettings } from "./types";
+import { IntelligenceSettingsTab } from "./ui/SettingsTab";
+import { IntelligenceService } from "./intelligenceService";
 import { ChatView } from "./ui/ChatView"; // Import the new ChatView
 
-export default class ObsidianRAGPlugin extends Plugin {
-	settings: ObsidianRAGPluginSettings;
-	ragService: RAGService;
+export default class IntelligencePlugin extends Plugin {
+	settings: IntelligencePluginSettings;
+	intelligenceService: IntelligenceService;
 	private statusBarItemEl: HTMLElement | null = null;
 
 	async onload() {
@@ -21,23 +21,26 @@ export default class ObsidianRAGPlugin extends Plugin {
 
 		// Register the Chat View
 		this.registerView(
-			VIEW_TYPE_RAG_CHAT,
+			VIEW_TYPE_INTELLIGENCE_CHAT,
 			(leaf: WorkspaceLeaf) => new ChatView(leaf, this)
 		);
 
-		// Add the RAG command
 		this.addCommand({
-			id: COMMAND_IDS.OPEN_RAG_CHAT,
-			name: COMMAND_NAMES["open-rag-chat-view"] || "Open RAG Chat", // Fallback name
+			id: COMMAND_IDS.OPEN_INTELLIGENCE_CHAT,
+			name:
+				COMMAND_NAMES["open-intelligence-chat-view"] ||
+				"Open Intelligence Chat", // Fallback name
 			callback: () => this.activateChatView(),
 		});
 
-		// Command to re-index/re-initialize the RAG service
+		// Command to reindex/re-initialize the Intelligence service
 		this.addCommand({
-			id: COMMAND_IDS.REINDEX_VAULT_RAG || "reindex-vault-rag", // Ensure ID from constants
+			id:
+				COMMAND_IDS.REINDEX_VAULT_INTELLIGENCE ||
+				"reindex-vault-intelligence", // Ensure ID from constants
 			name:
-				COMMAND_NAMES["reindex-vault-rag"] ||
-				"Re-initialize RAG (Re-index Vault)",
+				COMMAND_NAMES["reindex-vault-intelligence"] ||
+				"Reinitialize Intelligence (Reindex Vault)",
 			callback: async () => {
 				if (!this.settings.openAIApiKey) {
 					new Notice(
@@ -46,46 +49,53 @@ export default class ObsidianRAGPlugin extends Plugin {
 					return;
 				}
 				// Status bar update is handled within reInitialize
-				await this.ragService.reInitialize();
+				await this.intelligenceService.reInitialize();
 			},
 		});
 
-		// Initialize RAG Service
-		this.ragService = new RAGService(this.app, this.settings);
-		this.ragService.setPlugin(this); // Pass plugin instance to RAGService for status bar updates
+		// Initialize Inteliigence Service
+		this.intelligenceService = new IntelligenceService(
+			this.app,
+			this.settings
+		);
+		this.intelligenceService.setPlugin(this); // Pass plugin instance to IntelligenceService for status bar updates
 
 		// You might want to make this user-triggered or lazy-loaded
 		// if initialization is time-consuming or depends on user actions.
-		this.updateStatusBar("RAG: Initializing...");
-		await this.ragService.initialize();
-
+		this.updateStatusBar("Intelligence: Initializing...");
+		await this.intelligenceService.initialize();
 
 		// Update Ribbon Icon to open the Chat View
 		this.addRibbonIcon(
 			"messages-square", // More appropriate icon for chat
-			"Open RAG Chat",
+			"Open Intelligence Chat",
 			(evt: MouseEvent) => {
 				this.activateChatView();
 			}
 		).addClass("my-plugin-ribbon-class");
 
-		// Initial Status Bar setup (actual text set by RAGService)
+		// Initial Status Bar setup (actual text set by IntelligenceService)
 		this.statusBarItemEl = this.addStatusBarItem();
-		this.updateStatusBar("RAG"); // Initial placeholder
+		this.updateStatusBar("Intelligence"); // Initial placeholder
 
-		this.addSettingTab(new RAGSettingsTab(this.app, this)); 
+		this.addSettingTab(new IntelligenceSettingsTab(this.app, this));
+
+		//debugging: Activate the chat view on load
+		await this.activateChatView(); // Uncomment to auto-open chat view on plugin load
+
 	}
 
 	onunload() {
-		this.app.workspace.detachLeavesOfType(VIEW_TYPE_RAG_CHAT); // Clean up the view
-		console.log("Unloading Obsidian RAG plugin");
+		this.app.workspace.detachLeavesOfType(VIEW_TYPE_INTELLIGENCE_CHAT); // Clean up the view
+		console.log("Unloading Obsidian Intelligence");
 	}
 
 	// Helper method to activate and reveal the chat view
 	async activateChatView() {
 		// Check if a view of this type already exists and reveal it
-		const existingLeaves =
-			this.app.workspace.getLeavesOfType(VIEW_TYPE_RAG_CHAT);
+		const existingLeaves = this.app.workspace.getLeavesOfType(
+			VIEW_TYPE_INTELLIGENCE_CHAT
+		);
 		if (existingLeaves.length > 0) {
 			this.app.workspace.revealLeaf(existingLeaves[0]);
 			return;
@@ -97,18 +107,18 @@ export default class ObsidianRAGPlugin extends Plugin {
 		const leaf = this.app.workspace.getLeaf(true); // true to create a new leaf if none exists
 		if (leaf) {
 			await leaf.setViewState({
-				type: VIEW_TYPE_RAG_CHAT,
+				type: VIEW_TYPE_INTELLIGENCE_CHAT,
 				active: true,
 			});
 			this.app.workspace.revealLeaf(leaf);
 		} else {
 			new Notice(
-				"Could not open RAG Chat view: No available leaf in right sidebar."
+				"Could not open Intelligence Chat view: No available leaf in right sidebar."
 			);
 		}
 	}
 
-	// Public method for RAGService to update status bar
+	// Public method for IntelligenceService to update status bar
 	public updateStatusBar(text: string) {
 		if (this.statusBarItemEl) {
 			this.statusBarItemEl.setText(text);
@@ -126,18 +136,28 @@ export default class ObsidianRAGPlugin extends Plugin {
 		);
 	}
 
-    async saveSettings() {
-        await this.saveData(this.settings);
-        if (this.ragService && this.ragService.getIsInitialized()) { // Check if ragService and initialized
-            new Notice("Settings saved. RAG service will re-initialize if API key changed or to apply other settings.");
-            // Conditionally re-initialize. For now, re-initializing if settings are saved.
-            // You might want more granular control here, e.g., only re-initialize if API key changed.
-            await this.ragService.reInitialize();
-        } else if (this.ragService && !this.ragService.getIsInitialized()) {
-            new Notice("Settings saved. RAG service is not yet initialized. It will use new settings on next initialization.");
-        } else {
-             new Notice("Settings saved.");
-        }
-    }
+	async saveSettings() {
+		await this.saveData(this.settings);
+		if (
+			this.intelligenceService &&
+			this.intelligenceService.getIsInitialized()
+		) {
+			// Check if intelligenceService and initialized
+			new Notice(
+				"Settings saved. Intelligence service will re-initialize if API key changed or to apply other settings."
+			);
+			// Conditionally re-initialize. For now, re-initializing if settings are saved.
+			// You might want more granular control here, e.g., only re-initialize if API key changed.
+			await this.intelligenceService.reInitialize();
+		} else if (
+			this.intelligenceService &&
+			!this.intelligenceService.getIsInitialized()
+		) {
+			new Notice(
+				"Settings saved. Intelligence service is not yet initialized. It will use new settings on next initialization."
+			);
+		} else {
+			new Notice("Settings saved.");
+		}
+	}
 }
-

@@ -11,7 +11,7 @@ import {
 	MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { Runnable, RunnableSequence } from "@langchain/core/runnables"; // For type hint
-import type { ObsidianRAGPluginSettings, LangChainChatMessage } from "./types";
+import type { IntelligencePluginSettings, LangChainChatMessage } from "./types";
 import {
 	ChatModels,
 	TEMPATURE,
@@ -30,7 +30,7 @@ import { Notice } from "obsidian";
  * @throws Error if API key is missing.
  */
 export function getOpenAIEmbeddings(
-	settings: ObsidianRAGPluginSettings
+	settings: IntelligencePluginSettings
 ): OpenAIEmbeddings {
 	if (!settings.openAIApiKey) {
 		throw new Error("OpenAI API Key is not set in plugin settings.");
@@ -46,7 +46,7 @@ export function getOpenAIEmbeddings(
  * @throws Error if API key is missing.
  */
 export function getChatOpenAIModel(
-	settings: ObsidianRAGPluginSettings,
+	settings: IntelligencePluginSettings,
 	modelName = ChatModels.GPT_41
 ): ChatOpenAI {
 	if (!settings.openAIApiKey) {
@@ -67,29 +67,38 @@ export function getChatOpenAIModel(
  * @returns A promise that resolves to an instance of MemoryVectorStore.
  */
 export async function createAndEmbedVectorStore( // Renamed for clarity
-    documents: Document[], 
-    embeddingsService: OpenAIEmbeddings // Expecting the service instance
+	documents: Document[],
+	embeddingsService: OpenAIEmbeddings // Expecting the service instance
 ): Promise<MemoryVectorStore> {
-    if (documents.length === 0) {
-        console.warn("No document chunks found to create vector store.");
-        // Return an empty vector store, initialized with the embedding function
-        return new MemoryVectorStore(embeddingsService); 
-    }
-    new Notice(`Embedding ${documents.length} document chunks... This may take a moment.`, 10000);
-    // MemoryVectorStore.fromDocuments will use the provided embeddingsService to generate embeddings
-    const vectorStore = await MemoryVectorStore.fromDocuments(documents, embeddingsService);
-    new Notice(`Vector store created and ${documents.length} chunks embedded successfully.`, 5000);
-    return vectorStore;
+	if (documents.length === 0) {
+		console.warn("No document chunks found to create vector store.");
+		// Return an empty vector store, initialized with the embedding function
+		return new MemoryVectorStore(embeddingsService);
+	}
+	new Notice(
+		`Embedding ${documents.length} document chunks... This may take a moment.`,
+		10000
+	);
+	// MemoryVectorStore.fromDocuments will use the provided embeddingsService to generate embeddings
+	const vectorStore = await MemoryVectorStore.fromDocuments(
+		documents,
+		embeddingsService
+	);
+	new Notice(
+		`Vector store created and ${documents.length} chunks embedded successfully.`,
+		5000
+	);
+	return vectorStore;
 }
 
 /**
- * Creates a Conversational RAG chain.
+ * Creates a Conversational LLM chain.
  * It first uses chat history to rephrase the follow-up question, then retrieves documents,
  * and finally generates an answer based on the retrieved context and original question.
  * @param llm - An instance of ChatOpenAI.
  * @param vectorStore - An instance of MemoryVectorStore.
  * @param retrieverK - Optional number of document chunks the retriever should fetch.
- * @returns A Runnable sequence for conversational RAG.
+ * @returns A Runnable sequence for conversational LLM.
  */
 export async function createConversationalRAGChain(
 	llm: ChatOpenAI,
@@ -128,7 +137,7 @@ export async function createConversationalRAGChain(
 		prompt: answerGenerationPrompt,
 	});
 
-	// The full conversational RAG chain
+	// The full conversational LLM chain
 	const conversationalRetrievalChain = RunnableSequence.from([
 		// Step 1: Prepare the input for the parallel processing step.
 		// This step receives the initial {input, chat_history} from the chain's invocation.

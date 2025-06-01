@@ -6,7 +6,7 @@ import React, {
 	KeyboardEvent,
 } from "react";
 import { MarkdownRenderer, TFile, App } from "obsidian";
-import ObsidianRAGPlugin from "../main";
+import IntelligencePlugin from "../main";
 import { UIMessage, LangChainChatMessage } from "../types";
 import { CHATVIEW_WELCOME_MESSAGE } from "../constants";
 import { AVAILABLE_FILTERS } from "../filters";
@@ -14,7 +14,7 @@ import { FilterSignature } from "../filters";
 import { parseFiltersFromPrompt } from "../parser";
 
 interface ChatViewComponentProps {
-	plugin: ObsidianRAGPlugin;
+	plugin: IntelligencePlugin;
 	app: App;
 }
 
@@ -32,7 +32,7 @@ interface SuggestionItem {
 interface MessageRendererProps {
 	message: DisplayMessage;
 	app: App;
-	plugin: ObsidianRAGPlugin;
+	plugin: IntelligencePlugin;
 }
 
 const MessageRenderer: React.FC<MessageRendererProps> = ({
@@ -282,10 +282,13 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 				return;
 			}
 
-			if (!plugin.ragService || !plugin.ragService.getIsInitialized()) {
+			if (
+				!plugin.intelligenceService ||
+				!plugin.intelligenceService.getIsInitialized()
+			) {
 				addMessageToDisplay({
 					sender: "system",
-					text: "RAG service not initialized. Please wait or try re-initializing from plugin settings.",
+					text: "Intelligence service not initialized. Please wait or try re-initializing from plugin settings.",
 				});
 				return;
 			}
@@ -295,7 +298,7 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 				: [...chatHistory];
 
 			const aiResponseText =
-				await plugin.ragService.processQueryWithHistory(
+				await plugin.intelligenceService.processQueryWithHistory(
 					semanticQuery,
 					historyForChain,
 					metadataFilters
@@ -569,12 +572,12 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 	}, [hideSuggestions]);
 
 	return (
-		<div className="obsidian-rag-plugin">
-			<div className="rag-chat-view-container">
-				<div className="rag-p-4">
+		<div className="obsidian-intelligence">
+			<div className="intelligence-chat-view-container">
+				<div className="intelligence-p-4">
 					<button
 						onClick={handleClearChat}
-						className="rag-px-4 rag-py-2 rag-text-sm rag-bg-accent rag-text-white rag-rounded hover:rag-bg-accent-hover rag-transition-colors"
+						className="intelligence-px-4 intelligence-py-2 intelligence-text-sm intelligence-bg-accent intelligence-text-white intelligence-rounded hover:intelligence-bg-accent-hover intelligence-transition-colors"
 						aria-label="Clear all messages from the chat"
 					>
 						Clear Chat
@@ -583,7 +586,7 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 
 				<div
 					ref={messagesContainerRef}
-					className="rag-messages-container"
+					className="intelligence-messages-container"
 					role="log"
 					aria-label="Chat messages"
 					aria-live="polite"
@@ -600,10 +603,10 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 							<div
 								className={`max-w-[85%] md:max-w-[75%] rounded-lg p-4 ${
 									message.sender === "user"
-										? "rag-message-user"
+										? "intelligence-message-user"
 										: message.sender === "ai"
-										? "rag-message-ai"
-										: "rag-message-system"
+										? "intelligence-message-ai"
+										: "intelligence-message-system"
 								}`}
 							>
 								<MessageRenderer
@@ -636,7 +639,7 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 								onInput={handleInput}
 								onKeyDown={handleKeyDown}
 								placeholder="Type message or filter keyword"
-								className="rag-input-area resize-none"
+								className="intelligence-input-area resize-none"
 								disabled={isThinking}
 								aria-label="Chat input"
 								aria-autocomplete="list"
@@ -675,7 +678,7 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 													index ===
 													activeSuggestionIndex
 												}
-												className={`rag-suggestion-item ${
+												className={`intelligence-suggestion-item ${
 													index ===
 													activeSuggestionIndex
 														? "active"

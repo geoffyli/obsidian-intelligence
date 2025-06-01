@@ -1,20 +1,17 @@
 // tailwind.config.js
-import tailwindcssAnimate from "tailwindcss-animate";
-import { colorOpacityPlugin } from "./src/lib/plugins/colorOpacityPlugin";
 import colors from "tailwindcss/colors";
-import containerQueries from "@tailwindcss/container-queries";
 
 /** @type {import("tailwindcss").Config} */
 module.exports = {
 	// Add the important selector back to scope all styles
-	important: ".obsidian-rag-plugin",
+	important: ".obsidian-intelligence",
 	content: [
 		"./src/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/styles/tailwind.css",
 		// add other paths as needed
 	],
 	darkMode: "class", // Enable dark mode
-	plugins: [tailwindcssAnimate, colorOpacityPlugin, containerQueries],
+	plugins: [],
 	theme: {
 		extend: {
 			colors: {

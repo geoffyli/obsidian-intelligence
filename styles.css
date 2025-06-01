@@ -1,1 +1,479 @@
-.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.obsidian-rag-plugin{.rag-chat-view-container{display:flex;height:100%;flex-direction:column;background-color:var(--background-primary)}.rag-messages-container{flex:1 1 0%}.rag-messages-container>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(var(--size-4-4)*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(var(--size-4-4)*var(--tw-space-y-reverse))}.rag-messages-container{overflow-y:auto;padding:var(--size-4-4);border-radius:var(--radius-m);border-width:var(--border-width);border-color:var(--background-modifier-border);background-color:var(--background-secondary)}.rag-message-user{border-radius:var(--radius-l);border-bottom-right-radius:0;background-color:var(--accent);--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.rag-message-ai{border-radius:var(--radius-l);border-bottom-left-radius:0;color:var(--text-normal);border-width:var(--border-width);border-color:var(--background-modifier-border)}.rag-message-ai,.rag-message-system{background-color:var(--background-secondary)}.rag-message-system{text-align:center;color:var(--text-muted);border-radius:var(--radius-m);border-width:var(--border-width);border-color:var(--background-modifier-border)}.rag-input-area{width:100%;background-color:var(--background-primary);padding:var(--size-4-3);color:var(--text-normal);border-radius:var(--radius-m);border-width:var(--border-width);border-color:var(--background-modifier-border)}.rag-input-area:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000);--tw-ring-color:var(--accent)}.rag-suggestion-item{width:100%;cursor:var(--cursor-link);border-radius:var(--radius-m);padding:var(--size-4-2);text-align:left;font-size:.875rem;line-height:1.25rem;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.rag-suggestion-item:hover{background-color:var(--background-secondary)}.rag-suggestion-item.active{background-color:var(--accent);--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.rag-settings-container{max-width:56rem}.rag-settings-container>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(var(--size-4-6)*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(var(--size-4-6)*var(--tw-space-y-reverse))}.rag-settings-container{padding:var(--size-4-6)}.rag-settings-field>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(var(--size-4-2)*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(var(--size-4-2)*var(--tw-space-y-reverse))}.rag-settings-label{font-size:.875rem;line-height:1.25rem;font-weight:var(--font-medium);color:var(--text-normal)}.rag-settings-input{width:100%;background-color:var(--background-primary);padding:var(--size-4-2);color:var(--text-normal);border-radius:var(--radius-m);border-width:var(--border-width);border-color:var(--background-modifier-border)}.rag-settings-input:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000);--tw-ring-color:var(--accent)}.rag-settings-description{font-size:.875rem;line-height:1.25rem;color:var(--text-muted)}}.obsidian-rag-plugin .absolute{position:absolute}.obsidian-rag-plugin .relative{position:relative}.obsidian-rag-plugin .bottom-full{bottom:100%}.obsidian-rag-plugin .left-0{left:0}.obsidian-rag-plugin .right-0{right:0}.obsidian-rag-plugin .z-50{z-index:50}.obsidian-rag-plugin .mb-1{margin-bottom:var(--size-4-1)}.obsidian-rag-plugin .mt-6{margin-top:var(--size-4-6)}.obsidian-rag-plugin .flex{display:flex}.obsidian-rag-plugin .table{display:table}.obsidian-rag-plugin .hidden{display:none}.obsidian-rag-plugin .h-full{height:100%}.obsidian-rag-plugin .max-h-60{max-height:15rem}.obsidian-rag-plugin .w-full{width:100%}.obsidian-rag-plugin .max-w-\[85\%\]{max-width:85%}.obsidian-rag-plugin .flex-1{flex:1 1 0%}.obsidian-rag-plugin .flex-shrink-0{flex-shrink:0}.obsidian-rag-plugin .cursor-pointer{cursor:var(--cursor-link)}.obsidian-rag-plugin .resize-none{resize:none}.obsidian-rag-plugin .flex-col{flex-direction:column}.obsidian-rag-plugin .items-stretch{align-items:stretch}.obsidian-rag-plugin .justify-start{justify-content:flex-start}.obsidian-rag-plugin .justify-end{justify-content:flex-end}.obsidian-rag-plugin .gap-2{gap:var(--size-4-2)}.obsidian-rag-plugin :is(.space-y-6>:not([hidden])~:not([hidden])){--tw-space-y-reverse:0;margin-top:calc(var(--size-4-6)*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(var(--size-4-6)*var(--tw-space-y-reverse))}.obsidian-rag-plugin .overflow-y-auto{overflow-y:auto}.obsidian-rag-plugin .rounded{border-radius:.25rem}.obsidian-rag-plugin .rounded-lg{border-radius:var(--radius-l)}.obsidian-rag-plugin .rounded-md{border-radius:var(--radius-m)}.obsidian-rag-plugin .border{border-width:var(--border-width)}.obsidian-rag-plugin .border-border{border-color:var(--background-modifier-border)}.obsidian-rag-plugin .bg-accent{background-color:var(--accent)}.obsidian-rag-plugin .bg-primary{background-color:var(--background-primary)}.obsidian-rag-plugin .bg-secondary{background-color:var(--background-secondary)}.obsidian-rag-plugin .p-1{padding:var(--size-4-1)}.obsidian-rag-plugin .p-2{padding:var(--size-4-2)}.obsidian-rag-plugin .p-3{padding:var(--size-4-3)}.obsidian-rag-plugin .p-4{padding:var(--size-4-4)}.obsidian-rag-plugin .p-6{padding:var(--size-4-6)}.obsidian-rag-plugin .px-6{padding-left:var(--size-4-6);padding-right:var(--size-4-6)}.obsidian-rag-plugin .py-2{padding-top:var(--size-4-2);padding-bottom:var(--size-4-2)}.obsidian-rag-plugin .text-left{text-align:left}.obsidian-rag-plugin .text-center{text-align:center}.obsidian-rag-plugin .text-sm{font-size:.875rem;line-height:1.25rem}.obsidian-rag-plugin .text-small{font-size:var(--font-small)}.obsidian-rag-plugin .text-smaller{font-size:var(--font-smaller)}.obsidian-rag-plugin .text-smallest{font-size:var(--font-smallest)}.obsidian-rag-plugin .text-ui-larger{font-size:var(--font-ui-larger)}.obsidian-rag-plugin .text-ui-medium{font-size:var(--font-ui-medium)}.obsidian-rag-plugin .text-ui-small{font-size:var(--font-ui-small)}.obsidian-rag-plugin .text-ui-smaller{font-size:var(--font-ui-smaller)}.obsidian-rag-plugin .font-medium{font-weight:var(--font-medium)}.obsidian-rag-plugin .text-accent{color:var(--text-accent)}.obsidian-rag-plugin .text-error{color:var(--text-error)}.obsidian-rag-plugin .text-muted{color:var(--text-muted)}.obsidian-rag-plugin .text-normal{color:var(--text-normal)}.obsidian-rag-plugin .text-success{color:var(--text-success)}.obsidian-rag-plugin .text-warning{color:var(--text-warning)}.obsidian-rag-plugin .text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.obsidian-rag-plugin .shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.obsidian-rag-plugin .blur{--tw-blur:blur(8px)}.obsidian-rag-plugin .blur,.obsidian-rag-plugin .filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.obsidian-rag-plugin .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}@keyframes enter{0%{opacity:var(--tw-enter-opacity,1);transform:translate3d(var(--tw-enter-translate-x,0),var(--tw-enter-translate-y,0),0) scale3d(var(--tw-enter-scale,1),var(--tw-enter-scale,1),var(--tw-enter-scale,1)) rotate(var(--tw-enter-rotate,0))}}@keyframes exit{to{opacity:var(--tw-exit-opacity,1);transform:translate3d(var(--tw-exit-translate-x,0),var(--tw-exit-translate-y,0),0) scale3d(var(--tw-exit-scale,1),var(--tw-exit-scale,1),var(--tw-exit-scale,1)) rotate(var(--tw-exit-rotate,0))}}.obsidian-rag-plugin .bg-primary\/20{background-color:color-mix(in srgb,var(--background-primary) 20%,transparent)}.obsidian-rag-plugin .bg-modifier-error\/50{background-color:color-mix(in srgb,var(--background-modifier-error) 50%,transparent)}.obsidian-rag-plugin .hover\:bg-secondary:hover{background-color:var(--background-secondary)}.obsidian-rag-plugin .focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.obsidian-rag-plugin .focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.obsidian-rag-plugin .disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.obsidian-rag-plugin .disabled\:opacity-50:disabled{opacity:.5}@media (min-width:768px){.obsidian-rag-plugin .md\:max-w-\[75\%\]{max-width:75%}}
+/* Remove @tailwind base; to prevent global style pollution */
+
+.container {
+  width: 100%
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px
+  }
+}
+
+/* Chat view styles */
+
+.intelligence-chat-view-container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  background-color: var(--background-primary)
+}
+
+.intelligence-messages-container {
+  flex: 1 1 0%
+}
+
+.intelligence-messages-container > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(var(--size-4-4) * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(var(--size-4-4) * var(--tw-space-y-reverse))
+}
+
+.intelligence-messages-container {
+  overflow-y: auto;
+  padding: var(--size-4-4);
+  border-radius: var(--radius-m);
+  border-width: var(--border-width);
+  border-color: var(--background-modifier-border);
+  background-color: var(--background-secondary)
+}
+
+.intelligence-message-user {
+  border-radius: var(--radius-l);
+  border-bottom-right-radius: 0px;
+  background-color: var(--accent);
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+}
+
+.intelligence-message-ai {
+  border-radius: var(--radius-l);
+  border-bottom-left-radius: 0px;
+  background-color: var(--background-secondary);
+  color: var(--text-normal);
+  border-width: var(--border-width);
+  border-color: var(--background-modifier-border)
+}
+
+.intelligence-message-system {
+  background-color: var(--background-secondary);
+  text-align: center;
+  color: var(--text-muted);
+  border-radius: var(--radius-m);
+  border-width: var(--border-width);
+  border-color: var(--background-modifier-border)
+}
+
+.intelligence-input-area {
+  width: 100%;
+  background-color: var(--background-primary);
+  padding: var(--size-4-3);
+  color: var(--text-normal);
+  border-radius: var(--radius-m);
+  border-width: var(--border-width);
+  border-color: var(--background-modifier-border)
+}
+
+.intelligence-input-area:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: var(--accent)
+}
+
+.intelligence-suggestion-item {
+  width: 100%;
+  cursor: var(--cursor-link);
+  border-radius: var(--radius-m);
+  padding: var(--size-4-2);
+  text-align: left;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms
+}
+
+.intelligence-suggestion-item:hover {
+  background-color: var(--background-secondary)
+}
+
+.intelligence-suggestion-item.active {
+  background-color: var(--accent);
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+}
+
+/* Settings styles */
+
+.intelligence-settings-container {
+  max-width: 56rem
+}
+
+.intelligence-settings-container > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(var(--size-4-6) * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(var(--size-4-6) * var(--tw-space-y-reverse))
+}
+
+.intelligence-settings-container {
+  padding: var(--size-4-6)
+}
+
+.intelligence-settings-field > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(var(--size-4-2) * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(var(--size-4-2) * var(--tw-space-y-reverse))
+}
+
+.intelligence-settings-label {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: var(--font-medium);
+  color: var(--text-normal)
+}
+
+.intelligence-settings-input {
+  width: 100%;
+  background-color: var(--background-primary);
+  padding: var(--size-4-2);
+  color: var(--text-normal);
+  border-radius: var(--radius-m);
+  border-width: var(--border-width);
+  border-color: var(--background-modifier-border)
+}
+
+.intelligence-settings-input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: var(--accent)
+}
+
+.intelligence-settings-description {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--text-muted)
+}
+
+.obsidian-intelligence .absolute {
+  position: absolute
+}
+
+.obsidian-intelligence .relative {
+  position: relative
+}
+
+.obsidian-intelligence .bottom-full {
+  bottom: 100%
+}
+
+.obsidian-intelligence .left-0 {
+  left: 0px
+}
+
+.obsidian-intelligence .right-0 {
+  right: 0px
+}
+
+.obsidian-intelligence .z-50 {
+  z-index: 50
+}
+
+.obsidian-intelligence .mb-1 {
+  margin-bottom: var(--size-4-1)
+}
+
+.obsidian-intelligence .mt-6 {
+  margin-top: var(--size-4-6)
+}
+
+.obsidian-intelligence .flex {
+  display: flex
+}
+
+.obsidian-intelligence .table {
+  display: table
+}
+
+.obsidian-intelligence .hidden {
+  display: none
+}
+
+.obsidian-intelligence .h-full {
+  height: 100%
+}
+
+.obsidian-intelligence .max-h-60 {
+  max-height: 15rem
+}
+
+.obsidian-intelligence .w-full {
+  width: 100%
+}
+
+.obsidian-intelligence .max-w-\[85\%\] {
+  max-width: 85%
+}
+
+.obsidian-intelligence .flex-1 {
+  flex: 1 1 0%
+}
+
+.obsidian-intelligence .flex-shrink-0 {
+  flex-shrink: 0
+}
+
+.obsidian-intelligence .cursor-pointer {
+  cursor: var(--cursor-link)
+}
+
+.obsidian-intelligence .resize-none {
+  resize: none
+}
+
+.obsidian-intelligence .flex-col {
+  flex-direction: column
+}
+
+.obsidian-intelligence .items-stretch {
+  align-items: stretch
+}
+
+.obsidian-intelligence .justify-start {
+  justify-content: flex-start
+}
+
+.obsidian-intelligence .justify-end {
+  justify-content: flex-end
+}
+
+.obsidian-intelligence .gap-2 {
+  gap: var(--size-4-2)
+}
+
+.obsidian-intelligence :is(.space-y-6 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(var(--size-4-6) * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(var(--size-4-6) * var(--tw-space-y-reverse))
+}
+
+.obsidian-intelligence .overflow-y-auto {
+  overflow-y: auto
+}
+
+.obsidian-intelligence .rounded {
+  border-radius: 0.25rem
+}
+
+.obsidian-intelligence .rounded-lg {
+  border-radius: var(--radius-l)
+}
+
+.obsidian-intelligence .rounded-md {
+  border-radius: var(--radius-m)
+}
+
+.obsidian-intelligence .border {
+  border-width: var(--border-width)
+}
+
+.obsidian-intelligence .border-border {
+  border-color: var(--background-modifier-border)
+}
+
+.obsidian-intelligence .bg-accent {
+  background-color: var(--accent)
+}
+
+.obsidian-intelligence .bg-primary {
+  background-color: var(--background-primary)
+}
+
+.obsidian-intelligence .bg-secondary {
+  background-color: var(--background-secondary)
+}
+
+.obsidian-intelligence .p-1 {
+  padding: var(--size-4-1)
+}
+
+.obsidian-intelligence .p-2 {
+  padding: var(--size-4-2)
+}
+
+.obsidian-intelligence .p-3 {
+  padding: var(--size-4-3)
+}
+
+.obsidian-intelligence .p-4 {
+  padding: var(--size-4-4)
+}
+
+.obsidian-intelligence .p-6 {
+  padding: var(--size-4-6)
+}
+
+.obsidian-intelligence .px-6 {
+  padding-left: var(--size-4-6);
+  padding-right: var(--size-4-6)
+}
+
+.obsidian-intelligence .py-2 {
+  padding-top: var(--size-4-2);
+  padding-bottom: var(--size-4-2)
+}
+
+.obsidian-intelligence .text-left {
+  text-align: left
+}
+
+.obsidian-intelligence .text-center {
+  text-align: center
+}
+
+.obsidian-intelligence .text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem
+}
+
+.obsidian-intelligence .text-small {
+  font-size: var(--font-small)
+}
+
+.obsidian-intelligence .text-smaller {
+  font-size: var(--font-smaller)
+}
+
+.obsidian-intelligence .text-smallest {
+  font-size: var(--font-smallest)
+}
+
+.obsidian-intelligence .text-ui-larger {
+  font-size: var(--font-ui-larger)
+}
+
+.obsidian-intelligence .text-ui-medium {
+  font-size: var(--font-ui-medium)
+}
+
+.obsidian-intelligence .text-ui-small {
+  font-size: var(--font-ui-small)
+}
+
+.obsidian-intelligence .text-ui-smaller {
+  font-size: var(--font-ui-smaller)
+}
+
+.obsidian-intelligence .font-medium {
+  font-weight: var(--font-medium)
+}
+
+.obsidian-intelligence .text-accent {
+  color: var(--text-accent)
+}
+
+.obsidian-intelligence .text-error {
+  color: var(--text-error)
+}
+
+.obsidian-intelligence .text-muted {
+  color: var(--text-muted)
+}
+
+.obsidian-intelligence .text-normal {
+  color: var(--text-normal)
+}
+
+.obsidian-intelligence .text-success {
+  color: var(--text-success)
+}
+
+.obsidian-intelligence .text-warning {
+  color: var(--text-warning)
+}
+
+.obsidian-intelligence .text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+}
+
+.obsidian-intelligence .shadow-lg {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+
+.obsidian-intelligence .blur {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+.obsidian-intelligence .filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)
+}
+
+.obsidian-intelligence .transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms
+}
+
+/* Custom component styles */
+
+.obsidian-intelligence .hover\:bg-secondary:hover {
+  background-color: var(--background-secondary)
+}
+
+.obsidian-intelligence .focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px
+}
+
+.obsidian-intelligence .focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)
+}
+
+.obsidian-intelligence .disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed
+}
+
+.obsidian-intelligence .disabled\:opacity-50:disabled {
+  opacity: 0.5
+}
+
+@media (min-width: 768px) {
+  .obsidian-intelligence .md\:max-w-\[75\%\] {
+    max-width: 75%
+  }
+}
