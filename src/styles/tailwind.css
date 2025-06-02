@@ -4,9 +4,12 @@
 
 /* Custom component styles */
 @layer components {
+  .obsidian-intelligence {
+    @apply h-full;
+  }
   /* Chat view styles */
   .intelligence-chat-view-container {
-    @apply h-full flex flex-col bg-primary;
+    @apply h-full bg-primary;
   }
 
   .intelligence-messages-container {
@@ -29,9 +32,9 @@
   }
 
   .intelligence-input-area {
-    @apply w-full p-3 bg-primary text-normal;
+    @apply w-full p-3 bg-secondary text-normal;
     @apply border border-border rounded-md;
-    @apply focus:outline-none focus:ring-2 focus:ring-accent;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary;
   }
 
   .intelligence-suggestion-item {
@@ -57,9 +60,9 @@
   }
 
   .intelligence-settings-input {
-    @apply w-full p-2 bg-primary text-normal;
+    @apply w-full p-2 bg-accent text-normal;
     @apply border border-border rounded-md;
-    @apply focus:outline-none focus:ring-2 focus:ring-accent;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary;
   }
 
   .intelligence-settings-description {

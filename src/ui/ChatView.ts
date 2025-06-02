@@ -26,7 +26,6 @@ export class ChatView extends ItemView {
 	async onOpen() {
 		const container = this.contentEl;
 		container.empty();
-		container.addClass("intelligence-chat-view-container");
 
 		this.root = ReactDOM.createRoot(container);
 		this.root.render(

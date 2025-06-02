@@ -573,7 +573,7 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 
 	return (
 		<div className="obsidian-intelligence">
-			<div className="intelligence-chat-view-container">
+			<div className="intelligence-chat-view-container h-full flex flex-col">
 				<div className="intelligence-p-4">
 					<button
 						onClick={handleClearChat}
@@ -704,7 +704,7 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 							<button
 								onClick={handleSendMessage}
 								disabled={isThinking || !inputValue.trim()}
-								className="px-6 py-2 bg-accent text-white rounded hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors h-full"
+								className="px-6 py-2 border-2 border-accent text-white rounded hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors h-full"
 								aria-label="Send message"
 							>
 								Send

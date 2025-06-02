@@ -34,12 +34,14 @@
   }
 }
 
+.obsidian-intelligence {
+  height: 100%
+}
+
 /* Chat view styles */
 
 .intelligence-chat-view-container {
-  display: flex;
   height: 100%;
-  flex-direction: column;
   background-color: var(--background-primary)
 }
 
@@ -65,9 +67,8 @@
 .intelligence-message-user {
   border-radius: var(--radius-l);
   border-bottom-right-radius: 0px;
-  background-color: var(--accent);
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+  background-color: var(--text-accent);
+  color: var(--text-white)
 }
 
 .intelligence-message-ai {
@@ -90,7 +91,7 @@
 
 .intelligence-input-area {
   width: 100%;
-  background-color: var(--background-primary);
+  background-color: var(--background-secondary);
   padding: var(--size-4-3);
   color: var(--text-normal);
   border-radius: var(--radius-m);
@@ -104,7 +105,7 @@
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: var(--accent)
+  --tw-ring-color: var(--background-primary)
 }
 
 .intelligence-suggestion-item {
@@ -125,9 +126,8 @@
 }
 
 .intelligence-suggestion-item.active {
-  background-color: var(--accent);
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+  background-color: var(--text-accent);
+  color: var(--text-white)
 }
 
 /* Settings styles */
@@ -161,7 +161,7 @@
 
 .intelligence-settings-input {
   width: 100%;
-  background-color: var(--background-primary);
+  background-color: var(--text-accent);
   padding: var(--size-4-2);
   color: var(--text-normal);
   border-radius: var(--radius-m);
@@ -175,7 +175,7 @@
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: var(--accent)
+  --tw-ring-color: var(--background-primary)
 }
 
 .intelligence-settings-description {
@@ -202,10 +202,6 @@
 
 .obsidian-intelligence .right-0 {
   right: 0px
-}
-
-.obsidian-intelligence .z-50 {
-  z-index: 50
 }
 
 .obsidian-intelligence .mb-1 {
@@ -306,16 +302,16 @@
   border-width: var(--border-width)
 }
 
+.obsidian-intelligence .border-accent {
+  border-color: var(--text-accent)
+}
+
 .obsidian-intelligence .border-border {
   border-color: var(--background-modifier-border)
 }
 
 .obsidian-intelligence .bg-accent {
-  background-color: var(--accent)
-}
-
-.obsidian-intelligence .bg-primary {
-  background-color: var(--background-primary)
+  background-color: var(--text-accent)
 }
 
 .obsidian-intelligence .bg-secondary {
@@ -365,44 +361,8 @@
   line-height: 1.25rem
 }
 
-.obsidian-intelligence .text-small {
-  font-size: var(--font-small)
-}
-
-.obsidian-intelligence .text-smaller {
-  font-size: var(--font-smaller)
-}
-
-.obsidian-intelligence .text-smallest {
-  font-size: var(--font-smallest)
-}
-
-.obsidian-intelligence .text-ui-larger {
-  font-size: var(--font-ui-larger)
-}
-
-.obsidian-intelligence .text-ui-medium {
-  font-size: var(--font-ui-medium)
-}
-
-.obsidian-intelligence .text-ui-small {
-  font-size: var(--font-ui-small)
-}
-
-.obsidian-intelligence .text-ui-smaller {
-  font-size: var(--font-ui-smaller)
-}
-
 .obsidian-intelligence .font-medium {
   font-weight: var(--font-medium)
-}
-
-.obsidian-intelligence .text-accent {
-  color: var(--text-accent)
-}
-
-.obsidian-intelligence .text-error {
-  color: var(--text-error)
 }
 
 .obsidian-intelligence .text-muted {
@@ -413,17 +373,8 @@
   color: var(--text-normal)
 }
 
-.obsidian-intelligence .text-success {
-  color: var(--text-success)
-}
-
-.obsidian-intelligence .text-warning {
-  color: var(--text-warning)
-}
-
 .obsidian-intelligence .text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+  color: var(--text-white)
 }
 
 .obsidian-intelligence .shadow-lg {
