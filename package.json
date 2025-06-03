@@ -3,17 +3,16 @@
 	"version": "1.0.0",
 	"description": "This is a LLM agent plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
-  "scripts": {
-    "dev": "npm-run-all --parallel dev:*",
-    "dev:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --watch",
-    "dev:obsidian": "node esbuild.config.mjs",
-    "build": "npm run build:tailwind && npm run build:obsidian",
-    "build:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --minify",
-    "build:obsidian": "obsidian-plugin build --esbuild-config esbuild.config.cjs src/main.ts",
-    "test": "jest",
-    "check": "tsc -noEmit -skipLibCheck"
-  },
-
+	"scripts": {
+		"dev": "npm-run-all --parallel dev:*",
+		"dev:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --watch",
+		"dev:obsidian": "node esbuild.config.mjs",
+		"build": "npm run build:tailwind && npm run build:obsidian",
+		"build:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --minify",
+		"build:obsidian": "obsidian-plugin build --esbuild-config esbuild.config.cjs src/main.ts",
+		"test": "jest",
+		"check": "tsc -noEmit -skipLibCheck"
+	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
@@ -43,11 +42,17 @@
 		"@langchain/community": "^0.3.43",
 		"@langchain/core": "^0.3.57",
 		"@langchain/openai": "^0.5.10",
+		"@radix-ui/react-slot": "^1.2.3",
 		"axios": "^1.3.4",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
 		"dotenv": "^16.0.3",
 		"langchain": "^0.3.26",
+		"lucide-react": "^0.511.0",
 		"obsidian-community-lib": "^2.0.2",
 		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"react-dom": "^18.2.0",
+		"tailwind-merge": "^3.3.0",
+		"tw-animate-css": "^1.3.3"
 	}
 }

@@ -12,6 +12,7 @@ import { CHATVIEW_WELCOME_MESSAGE } from "../constants";
 import { AVAILABLE_FILTERS } from "../filters";
 import { FilterSignature } from "../filters";
 import { parseFiltersFromPrompt } from "../parser";
+import { Button } from "@/components/ui/button";
 
 interface ChatViewComponentProps {
 	plugin: IntelligencePlugin;
@@ -574,14 +575,16 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 	return (
 		<div className="obsidian-intelligence">
 			<div className="intelligence-chat-view-container h-full flex flex-col">
-				<div className="intelligence-p-4">
-					<button
+				<div className="pb-2">
+					{/* Test shadcn button */}
+					<Button
 						onClick={handleClearChat}
-						className="intelligence-px-4 intelligence-py-2 intelligence-text-sm intelligence-bg-accent intelligence-text-white intelligence-rounded hover:intelligence-bg-accent-hover intelligence-transition-colors"
+						className=""
+						variant="link"
 						aria-label="Clear all messages from the chat"
 					>
 						Clear Chat
-					</button>
+					</Button>
 				</div>
 
 				<div
