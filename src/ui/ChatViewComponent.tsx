@@ -638,7 +638,7 @@ const ChatViewComponent: React.FC<ChatViewComponentProps> = ({
 								onChange={(e) => setInputValue(e.target.value)}
 								onInput={handleInput}
 								onKeyDown={handleKeyDown}
-								placeholder="Type message or filter keyword"
+								placeholder="Type a message or filter keyword"
 								className="intelligence-input-area resize-none"
 								disabled={isThinking}
 								aria-label="Chat input"

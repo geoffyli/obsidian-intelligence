@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:*",
     "dev:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --watch",
-    "dev:obsidian": "obsidian-plugin dev --esbuild-config esbuild.config.cjs src/main.ts",
+    "dev:obsidian": "node esbuild.config.mjs",
     "build": "npm run build:tailwind && npm run build:obsidian",
     "build:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --minify",
     "build:obsidian": "obsidian-plugin build --esbuild-config esbuild.config.cjs src/main.ts",
