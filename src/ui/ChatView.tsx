@@ -16,7 +16,7 @@ interface ChatViewProps {
 	app: App;
 }
 
-const ChatViewComponent: React.FC<ChatViewProps> = ({
+const ChatView: React.FC<ChatViewProps> = ({
 	plugin,
 	app,
 }) => {
@@ -172,4 +172,4 @@ const ChatViewComponent: React.FC<ChatViewProps> = ({
 	);
 };
 
-export default ChatViewComponent;
+export default ChatView;

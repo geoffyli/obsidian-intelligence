@@ -6,13 +6,19 @@ import {
 } from "./constants";
 import { DEFAULT_SETTINGS } from "./types";
 import type { IntelligencePluginSettings } from "./types";
-import { IntelligenceSettingsTab } from "./ui/SettingsTab";
 import { IntelligenceService } from "./intelligenceService";
-import { ChatView } from "./ui/ChatView"; // Import the new ChatView
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { ItemView } from "obsidian";
+import ChatViewComponent from "./ui/ChatView";
+import { SharedState } from "./state/SharedState";
+import { Providers } from "./state/contexts";
+import SettingsTab from "./ui/SettingsTab";
 
 export default class IntelligencePlugin extends Plugin {
-	settings: IntelligencePluginSettings;
-	intelligenceService: IntelligenceService;
+	// Fix: Add definite assignment assertions to class properties
+	settings!: IntelligencePluginSettings;
+	intelligenceService!: IntelligenceService;
 	private statusBarItemEl: HTMLElement | null = null;
 
 	async onload() {
@@ -66,19 +72,17 @@ export default class IntelligencePlugin extends Plugin {
 		await this.intelligenceService.initialize();
 
 		// Update Ribbon Icon to open the Chat View
-		this.addRibbonIcon(
-			"messages-square", // More appropriate icon for chat
-			"Open Intelligence Chat",
-			(evt: MouseEvent) => {
-				this.activateChatView();
-			}
-		).addClass("my-plugin-ribbon-class");
+		// Fix: Remove unused parameter 'evt' in addRibbonIcon callback
+		this.addRibbonIcon("messages-square", "Open Intelligence Chat", () => {
+			this.activateChatView();
+		}).addClass("my-plugin-ribbon-class");
 
 		// Initial Status Bar setup (actual text set by IntelligenceService)
 		this.statusBarItemEl = this.addStatusBarItem();
 		this.updateStatusBar("Intelligence"); // Initial placeholder
 
-		this.addSettingTab(new IntelligenceSettingsTab(this.app, this));
+		// In onload(), register the settings tab using the new SettingsTab class
+		this.addSettingTab(new SettingsTab(this.app, this));
 
 		//debugging: Activate the chat view on load
 		await this.activateChatView(); // Uncomment to auto-open chat view on plugin load
@@ -160,3 +164,88 @@ export default class IntelligencePlugin extends Plugin {
 		}
 	}
 }
+
+// --- Begin: ChatView (moved from ChatView.ts) ---
+export class ChatView extends ItemView {
+	plugin: IntelligencePlugin;
+	private root: ReactDOM.Root | null = null;
+	private sharedState: SharedState;
+	private eventTarget: EventTarget;
+
+	constructor(leaf: WorkspaceLeaf, plugin: IntelligencePlugin) {
+		super(leaf);
+		this.plugin = plugin;
+		this.icon = "messages-square";
+		this.sharedState = new SharedState();
+		this.eventTarget = new EventTarget();
+		this.loadPersistedState();
+	}
+
+	getViewType(): string {
+		return VIEW_TYPE_INTELLIGENCE_CHAT;
+	}
+
+	getDisplayText(): string {
+		return "Intelligence Chat";
+	}
+
+	async onOpen() {
+		const container = this.contentEl;
+		container.empty();
+		this.root = ReactDOM.createRoot(container);
+		// Fix: Add children prop to Providers in ChatView
+		this.root.render(
+			React.createElement(
+				React.StrictMode,
+				{},
+				React.createElement(Providers, {
+					sharedState: this.sharedState,
+					app: this.plugin.app,
+					eventTarget: this.eventTarget,
+					children: React.createElement(ChatViewComponent, {
+						plugin: this.plugin,
+						app: this.plugin.app,
+					}),
+				})
+			)
+		);
+	}
+
+	async onClose() {
+		this.savePersistedState();
+		if (this.root) {
+			this.root.unmount();
+			this.root = null;
+		}
+		console.log("Intelligence ChatView closed");
+	}
+
+	private async loadPersistedState() {
+		try {
+			const savedState = await this.plugin.loadData();
+			if (savedState?.chatState) {
+				this.sharedState.loadState(savedState.chatState);
+			}
+		} catch (error) {
+			console.error("Failed to load persisted state:", error);
+		}
+	}
+
+	private async savePersistedState() {
+		try {
+			const currentData = (await this.plugin.loadData()) || {};
+			const stateToSave = {
+				...currentData,
+				chatState: this.sharedState.saveState(),
+			};
+			await this.plugin.saveData(stateToSave);
+		} catch (error) {
+			console.error("Failed to save persisted state:", error);
+		}
+	}
+
+	async handleSaveChat() {
+		await this.savePersistedState();
+	}
+}
+// --- End: ChatView ---

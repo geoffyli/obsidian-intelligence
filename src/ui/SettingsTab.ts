@@ -1,12 +1,8 @@
-import { App, PluginSettingTab } from "obsidian";
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { App, PluginSettingTab, Setting, Notice } from "obsidian";
 import IntelligencePlugin from "../main";
-import SettingsTabComponent from "./SettingsTabComponent";
 
-export class IntelligenceSettingsTab extends PluginSettingTab {
+class SettingsTab extends PluginSettingTab {
 	plugin: IntelligencePlugin;
-	private root: ReactDOM.Root | null = null;
 
 	constructor(app: App, plugin: IntelligencePlugin) {
 		super(app, plugin);
@@ -17,38 +13,52 @@ export class IntelligenceSettingsTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		if (!this.plugin) {
-			console.error(
-				"IntelligenceSettingsTab Error: Plugin instance is not available."
-			);
-			containerEl.setText(
-				"Error: Intelligence Plugin instance is not available. Cannot display settings."
-			);
-			return;
-		}
+		containerEl.createEl("h2", { text: "Obsidian Intelligence Settings" });
 
-		if (!this.plugin.settings) {
-			console.error(
-				"IntelligenceSettingsTab Error: Plugin settings are not loaded."
-			);
-			containerEl.setText(
-				"Error: Intelligence Plugin settings are not loaded. Please try reloading the plugin."
-			);
-			return;
-		}
+		// OpenAI API Key Setting
+		new Setting(containerEl)
+			.setName("OpenAI API Key")
+			.setDesc(
+				"Enter your OpenAI API key. Changes are saved when you click away (on blur)."
+			)
+			.addText((text) => {
+				text
+					.setPlaceholder("sk-...")
+					.setValue(
+						this.plugin.settings.openAIApiKey || ""
+					).inputEl.type = "password";
+				text.onBlur(async () => {
+					const trimmedKey = text.getValue().trim();
+					if (this.plugin.settings.openAIApiKey !== trimmedKey) {
+						this.plugin.settings.openAIApiKey = trimmedKey;
+						new Notice(
+							"OpenAI API Key updated. Saving settings..."
+						);
+						await this.plugin.saveSettings();
+					}
+				});
+			});
 
-		this.root = ReactDOM.createRoot(containerEl);
-		this.root.render(
-			React.createElement(SettingsTabComponent, {
-				plugin: this.plugin,
-			})
-		);
-	}
+		// My Original Setting
+		new Setting(containerEl)
+			.setName("My Original Setting")
+			.setDesc(
+				"It's a secret (original setting example). Saved on change."
+			)
+			.addText((text) => {
+				text.setPlaceholder("Enter your secret")
+					.setValue(this.plugin.settings.mySetting || "")
+					.onChange(async (value) => {
+						this.plugin.settings.mySetting = value;
+						await this.plugin.saveSettings();
+					});
+			});
 
-	hide(): void {
-		if (this.root) {
-			this.root.unmount();
-			this.root = null;
-		}
+		containerEl.createEl("div", {
+			cls: "mt-6",
+			text: "These settings are saved automatically when you change them. The plugin will re-initialize with the new settings.",
+		});
 	}
 }
+
+export default SettingsTab;
