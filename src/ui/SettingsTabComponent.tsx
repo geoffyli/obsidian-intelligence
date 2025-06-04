@@ -53,12 +53,12 @@ const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
 	}
 
 	return (
-		<div className="obsidian-intelligence">
-			<div className="intelligence-settings-container">
-				<div className="intelligence-settings-field">
+		<div className="h-full text-foreground bg-background text-ui-small">
+			<div className="p-6 space-y-6 max-w-4xl bg-background text-foreground">
+				<div className="space-y-2">
 					<label
 						htmlFor="openai-api-key"
-						className="intelligence-settings-label"
+						className="text-sm font-medium text-foreground"
 					>
 						OpenAI API Key
 					</label>
@@ -69,9 +69,9 @@ const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
 						value={openAIApiKeyValue}
 						onChange={(e) => setOpenAIApiKeyValue(e.target.value)}
 						onBlur={handleApiKeyBlur}
-						className="intelligence-settings-input"
+						className="w-full p-2 rounded-md border border-border bg-modifier-form-field text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
 					/>
-					<p className="intelligence-settings-description">
+					<p className="text-sm text-muted-foreground">
 						Enter your OpenAI API key. Changes are saved when you
 						click away (on blur).
 					</p>
@@ -90,16 +90,16 @@ const SettingsTabComponent: React.FC<SettingsTabComponentProps> = ({
 						placeholder="Enter your secret"
 						value={mySettingValue}
 						onChange={handleMySettingChange}
-						className="intelligence-settings-input"
+						className="w-full p-2 rounded-md border border-border bg-modifier-form-field text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
 					/>
-					<p className="intelligence-settings-description">
+					<p className="text-sm text-muted-foreground">
 						It's a secret (original setting example). Saved on
 						change.
 					</p>
 				</div>
 
 				<div className="mt-6">
-					<p className="intelligence-settings-description">
+					<p className="text-sm text-muted-foreground">
 						These settings are saved automatically when you change
 						them. The plugin will re-initialize with the new
 						settings.

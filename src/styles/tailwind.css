@@ -1,71 +1,59 @@
-/* Remove @tailwind base; to prevent global style pollution */
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-/* Custom component styles */
+/* Ensure proper opacity defaults for all elements */
+@layer base {
+	* {
+		--tw-bg-opacity: 1;
+		--tw-text-opacity: 1;
+		--tw-border-opacity: 1;
+		--tw-ring-opacity: 1;
+	}
+}
+
+/* Essential custom component styles */
 @layer components {
-	.obsidian-intelligence {
-		@apply h-full;
-	}
-	/* Chat view styles */
-	.intelligence-chat-view-container {
-		@apply h-full bg-primary;
+	/* Markdown rendered content styling - Essential for Obsidian integration */
+	.markdown-rendered-content {
+		color: inherit;
 	}
 
-	.intelligence-messages-container {
-		@apply flex-1 overflow-y-auto p-4 space-y-4;
-		@apply bg-secondary border border-border rounded-md;
+	.markdown-rendered-content h1,
+	.markdown-rendered-content h2,
+	.markdown-rendered-content h3,
+	.markdown-rendered-content h4,
+	.markdown-rendered-content h5,
+	.markdown-rendered-content h6 {
+		color: var(--text-normal);
 	}
 
-	.intelligence-message-user {
-		@apply bg-accent text-white rounded-lg;
+	.markdown-rendered-content a {
+		color: var(--text-accent);
 	}
 
-	.intelligence-message-ai {
-		@apply bg-secondary  rounded-lg;
-		@apply border border-border;
+	.markdown-rendered-content a:hover {
+		color: var(--text-accent-hover);
 	}
 
-	.intelligence-message-system {
-		@apply bg-secondary text-muted text-center;
-		@apply border border-border rounded-md;
+	.markdown-rendered-content code {
+		background-color: var(--background-modifier-border);
+		color: var(--text-normal);
+		padding: 0.125rem 0.25rem;
+		border-radius: var(--radius-s);
 	}
 
-	.intelligence-input-area {
-		@apply w-full p-3 bg-secondary ;
-		@apply border border-border rounded-md;
-		@apply focus:outline-none focus:ring-2 focus:ring-primary;
+	.markdown-rendered-content pre {
+		background-color: var(--background-secondary);
+		border: 1px solid var(--background-modifier-border);
+		border-radius: var(--radius-m);
+		padding: 1rem;
 	}
 
-	.intelligence-suggestion-item {
-		@apply w-full text-left p-2 text-sm cursor-pointer rounded-md;
-		@apply hover:bg-secondary transition-colors;
-	}
-
-	.intelligence-suggestion-item.active {
-		@apply bg-accent text-white;
-	}
-
-	/* Settings styles */
-	.intelligence-settings-container {
-		@apply p-6 space-y-6 max-w-4xl;
-	}
-
-	.intelligence-settings-field {
-		@apply space-y-2;
-	}
-
-	.intelligence-settings-label {
-		@apply text-sm font-medium ;
-	}
-
-	.intelligence-settings-input {
-		@apply w-full p-2 bg-accent ;
-		@apply border border-border rounded-md;
-		@apply focus:outline-none focus:ring-2 focus:ring-primary;
-	}
-
-	.intelligence-settings-description {
-		@apply text-sm text-muted;
+	.markdown-rendered-content blockquote {
+		border-left: 4px solid var(--text-accent);
+		padding-left: 1rem;
+		margin-left: 0;
+		color: var(--text-muted);
 	}
 }

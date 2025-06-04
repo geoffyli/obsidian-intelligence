@@ -82,7 +82,6 @@ export default class IntelligencePlugin extends Plugin {
 
 		//debugging: Activate the chat view on load
 		await this.activateChatView(); // Uncomment to auto-open chat view on plugin load
-
 	}
 
 	onunload() {

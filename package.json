@@ -7,11 +7,11 @@
 		"dev": "npm-run-all --parallel dev:*",
 		"dev:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --watch",
 		"dev:obsidian": "node esbuild.config.mjs",
-		"build": "npm run build:tailwind && npm run build:obsidian",
-		"build:tailwind": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --minify",
-		"build:obsidian": "obsidian-plugin build --esbuild-config esbuild.config.cjs src/main.ts",
+		"build": "npm run css && node esbuild.config.mjs production",
+		"css": "npx tailwindcss -i src/styles/tailwind.css -o styles.css --minify",
 		"test": "jest",
-		"check": "tsc -noEmit -skipLibCheck"
+		"check": "tsc -noEmit -skipLibCheck",
+		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [],
 	"author": "",
@@ -20,6 +20,7 @@
 		"@types/jest": "^29.5.14",
 		"@types/node": "^16.11.6",
 		"@types/react": "^18.2.0",
+		"@tailwindcss/container-queries": "^0.1.1",
 		"@types/react-dom": "^18.2.0",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",
@@ -32,7 +33,7 @@
 		"npm-run-all": "^4.1.5",
 		"obsidian": "latest",
 		"postcss": "^8.4.31",
-		"tailwindcss": "^3.3.5",
+		"tailwindcss": "^3.4.15",
 		"ts-jest": "^29.3.4",
 		"ts-node": "^10.9.2",
 		"tslib": "2.4.0",
@@ -42,7 +43,12 @@
 		"@langchain/community": "^0.3.43",
 		"@langchain/core": "^0.3.57",
 		"@langchain/openai": "^0.5.10",
+		"@radix-ui/react-label": "^2.1.7",
+		"@radix-ui/react-popover": "^1.1.14",
+		"@radix-ui/react-select": "^2.2.5",
 		"@radix-ui/react-slot": "^1.2.3",
+		"@radix-ui/react-switch": "^1.2.5",
+		"@radix-ui/react-tabs": "^1.1.12",
 		"axios": "^1.3.4",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
@@ -53,6 +59,6 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"tailwind-merge": "^3.3.0",
-		"tw-animate-css": "^1.3.3"
+		"tailwindcss-animate": "^1.0.7"
 	}
 }
