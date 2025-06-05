@@ -28,6 +28,42 @@ const ChatView: React.FC<ChatViewProps> = ({
 			text: CHATVIEW_WELCOME_MESSAGE,
 			timestamp: new Date(),
 		},
+		{
+			id: crypto.randomUUID(),
+			sender: "user",
+			text: "What are the main themes in my notes about productivity?",
+			timestamp: new Date(Date.now() - 300000), // 5 minutes ago
+		},
+		{
+			id: crypto.randomUUID(),
+			sender: "ai",
+			text: "Based on your notes about productivity, I've identified several key themes:\n\n## Main Themes\n\n1. **Time Management** - Your notes frequently discuss techniques like the Pomodoro Technique and time blocking\n2. **Focus and Deep Work** - You've written extensively about creating distraction-free environments\n3. **Habit Formation** - Multiple notes cover building sustainable daily routines\n4. **Digital Minimalism** - Several entries explore reducing digital distractions\n\n### Referenced Notes\n- [[Productivity Systems]]\n- [[Deep Work Principles]]\n- [[Morning Routine Optimization]]\n\nWould you like me to elaborate on any of these themes or help you find specific notes on a particular aspect?",
+			timestamp: new Date(Date.now() - 240000), // 4 minutes ago
+		},
+		{
+			id: crypto.randomUUID(),
+			sender: "user",
+			text: "Can you find notes from last week about meeting notes?",
+			timestamp: new Date(Date.now() - 180000), // 3 minutes ago
+		},
+		{
+			id: crypto.randomUUID(),
+			sender: "ai",
+			text: "I found 3 meeting notes from last week:\n\n## Meeting Notes (Last Week)\n\n**1. Team Standup - January 15**\n- Discussed project timeline adjustments\n- Sprint planning for Q1 goals\n- Action items assigned\n\n**2. Client Review - January 17**\n- Feedback on current deliverables\n- Next milestone planning\n- Budget discussion\n\n**3. Strategy Session - January 19**\n- Long-term vision alignment\n- Resource allocation\n- Quarterly objectives\n\n### Quick Links\n- [[Team Standup 2024-01-15]]\n- [[Client Review Meeting 2024-01-17]]\n- [[Q1 Strategy Session 2024-01-19]]\n\nWould you like me to summarize the key points from any specific meeting?",
+			timestamp: new Date(Date.now() - 120000), // 2 minutes ago
+		},
+		{
+			id: crypto.randomUUID(),
+			sender: "user",
+			text: "Show me the action items from the team standup",
+			timestamp: new Date(Date.now() - 60000), // 1 minute ago
+		},
+		{
+			id: crypto.randomUUID(),
+			sender: "ai",
+			text: "Here are the action items from the Team Standup meeting on January 15:\n\n## Action Items\n\n### High Priority\n- [ ] **Sarah**: Complete API documentation by Friday\n- [ ] **Mike**: Review and merge feature branch #247\n- [ ] **Team**: Finalize sprint backlog items (due Wednesday)\n\n### Medium Priority\n- [ ] **Alex**: Update project timeline in Notion\n- [ ] **Sarah**: Schedule client demo for next week\n- [ ] **Mike**: Investigate performance bottleneck in user dashboard\n\n### Follow-up\n- [ ] **All**: Prepare individual progress reports for Friday\n- [ ] **Team Lead**: Send meeting summary to stakeholders\n\n*Last updated: January 15, 2024*\n\nNote: These items were extracted from [[Team Standup 2024-01-15]]. Would you like me to help track the completion status or find related notes?",
+			timestamp: new Date(Date.now() - 30000), // 30 seconds ago
+		},
 	]);
 	const [isThinking, setIsThinking] = useState(false);
 
@@ -141,7 +177,7 @@ const ChatView: React.FC<ChatViewProps> = ({
 	}, []);
 
 	return (
-		<div className="h-full text-foreground bg-background text-ui-small">
+		<div className="h-full text-foreground bg-background text-sm">
 			<div className="h-full flex flex-col bg-background text-foreground">
 				{/* Header */}
 				<ChatHeader

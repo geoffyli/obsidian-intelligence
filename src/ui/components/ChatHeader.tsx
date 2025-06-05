@@ -14,10 +14,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 	isProcessing = false,
 }) => {
 	return (
-		<div className="flex items-center justify-between p-3 border-b border-border bg-background">
+		<div className="flex items-center justify-between border-b border-border bg-background">
 			{/* Left side - Title */}
 			<div className="flex items-center space-x-2">
-				<h2 className="text-lg font-semibold text-foreground">Intelligence Chat</h2>
+				<h2 className="mt-2 mb-2">Intelligence Chat</h2>
 			</div>
 
 			{/* Right side - Actions */}

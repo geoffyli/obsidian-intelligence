@@ -88,7 +88,7 @@ const SuggestionPopover: React.FC<SuggestionPopoverProps> = ({
 					role="option"
 					aria-selected={index === activeSuggestionIndex}
 					className={cn(
-						"w-full text-left p-3 text-sm cursor-pointer transition-colors rounded-md",
+						"w-full text-left p-3 text-base cursor-pointer transition-colors rounded-md",
 						"hover:bg-muted focus:bg-muted",
 						"flex items-center justify-between",
 						index === activeSuggestionIndex && "bg-primary text-primary-foreground"
@@ -102,7 +102,7 @@ const SuggestionPopover: React.FC<SuggestionPopoverProps> = ({
 							{suggestion.displayText}
 						</span>
 					</div>
-					<span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
+					<span className="text-sm text-muted-foreground ml-2 flex-shrink-0">
 						{getSuggestionDescription(suggestion)}
 					</span>
 				</button>

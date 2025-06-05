@@ -106,13 +106,13 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 	const getMessageStyles = (sender: string) => {
 		switch (sender) {
 			case "user":
-				return "max-w-[85%] md:max-w-[75%] ml-auto bg-primary text-primary-foreground rounded-lg shadow-sm";
+				return "max-w-[85%] md:max-w-[75%] ml-auto w-fit bg-primary text-primary-foreground rounded-lg shadow-sm";
 			case "ai":
-				return "max-w-[85%] md:max-w-[75%] mr-auto bg-secondary text-secondary-foreground border border-border rounded-lg shadow-sm";
+				return "max-w-[85%] md:max-w-[75%] mr-auto w-fit bg-base-30 text-secondary-foreground border border-border rounded-lg shadow-sm";
 			case "system":
-				return "mx-auto max-w-[90%] bg-muted text-muted-foreground border border-border text-center rounded-md";
+				return "mx-auto max-w-[90%] w-fit bg-muted text-muted-foreground border border-border text-center rounded-md";
 			default:
-				return "mx-auto max-w-[90%] bg-muted text-muted-foreground border border-border text-center rounded-md";
+				return "mx-auto max-w-[90%] w-fit bg-muted text-muted-foreground border border-border text-center rounded-md";
 		}
 	};
 
@@ -120,7 +120,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 		<div className="flex-1 flex flex-col min-h-0">
 			<div
 				ref={messagesContainerRef}
-				className="flex-1 overflow-y-auto p-4 space-y-4 bg-secondary rounded-lg"
+				className="flex-1 overflow-y-auto p-4 space-y-4 bg-base-20 rounded-lg"
+				// style={{backgroundColor: 'var(--background-secondary)'}}
 				role="log"
 				aria-label="Chat messages"
 				aria-live="polite"
@@ -129,9 +130,15 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 					<div
 						key={message.id}
 						className={cn(
-							"rounded-lg p-4",
+							"rounded-lg px-3 py-2",
 							getMessageStyles(message.sender)
 						)}
+						style={{
+							backgroundColor: message.sender === 'user' 
+								? 'var(--interactive-accent)' 
+								: 'var(--background-modifier-hover)',
+							borderColor: message.sender !== 'user' ? 'var(--background-modifier-border)' : undefined
+						}}
 					>
 						<MessageRenderer
 							message={message}

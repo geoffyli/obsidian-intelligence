@@ -8,8 +8,14 @@ import React, {
 import { App, TFile } from "obsidian";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SendHorizontal, Settings2, FileText, Link } from 'lucide-react';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { SendHorizontal, Settings2, FileText, Link } from "lucide-react";
 import { useSuggestions } from "../hooks/useSuggestions";
 import SuggestionPopover, { SuggestionItem } from "./SuggestionPopover";
 import { FilterSignature } from "../../filters";
@@ -27,9 +33,9 @@ interface ChatControlProps {
 
 type RagMode = "vault" | "web" | "none";
 
-const INITIAL_TEXTAREA_HEIGHT = "2.5rem";
 const MAX_TEXTAREA_HEIGHT_LINES = 7;
 const LINE_HEIGHT = 1.2 * 16;
+const MIN_TEXTAREA_HEIGHT = 35; // px - single line: 14px text + 8px top padding + 8px line spacing
 
 const ChatControl: React.FC<ChatControlProps> = ({
 	onSendMessage,
@@ -39,62 +45,69 @@ const ChatControl: React.FC<ChatControlProps> = ({
 }) => {
 	const [inputValue, setInputValue] = useState("");
 	const [chatMode] = useState<"agent" | "chat">("chat");
-	const [ragMode, setRagMode] = useState<RagMode>('vault');
-	const [textareaHeight, setTextareaHeight] = useState(
-		INITIAL_TEXTAREA_HEIGHT
-	);
+	const [ragMode, setRagMode] = useState<RagMode>("vault");
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	// Handle suggestion selection
-	const handleSuggestionSelect = useCallback((
-		suggestion: SuggestionItem,
-		queryInfo: { query: string; startPos: number; endPos: number } | null
-	) => {
-		if (!textareaRef.current || !queryInfo) return;
+	const handleSuggestionSelect = useCallback(
+		(
+			suggestion: SuggestionItem,
+			queryInfo: {
+				query: string;
+				startPos: number;
+				endPos: number;
+			} | null
+		) => {
+			if (!textareaRef.current || !queryInfo) return;
 
-		const { startPos, endPos } = queryInfo;
-		const beforeText = inputValue.substring(0, startPos);
-		const afterText = inputValue.substring(endPos);
+			const { startPos, endPos } = queryInfo;
+			const beforeText = inputValue.substring(0, startPos);
+			const afterText = inputValue.substring(endPos);
 
-		let replacementText = "";
-		let newCursorPos = startPos;
+			let replacementText = "";
+			let newCursorPos = startPos;
 
-		switch (suggestion.type) {
-			case "filterType": {
-				const filterData = suggestion.data as FilterSignature;
-				replacementText = `${filterData.emoji}{}`;
-				newCursorPos = startPos + replacementText.length - 1; // Position cursor inside {}
-				break;
+			switch (suggestion.type) {
+				case "filterType": {
+					const filterData = suggestion.data as FilterSignature;
+					replacementText = `${filterData.emoji}{}`;
+					newCursorPos = startPos + replacementText.length - 1; // Position cursor inside {}
+					break;
+				}
+
+				case "filterValue": {
+					const valueData = suggestion.data as string;
+					replacementText = valueData;
+					newCursorPos = startPos + replacementText.length;
+					break;
+				}
+
+				case "fileName": {
+					const fileData = suggestion.data as TFile;
+					replacementText = `[[${fileData.basename}]]`;
+					newCursorPos = startPos + replacementText.length;
+					break;
+				}
 			}
 
-			case "filterValue": {
-				const valueData = suggestion.data as string;
-				replacementText = valueData;
-				newCursorPos = startPos + replacementText.length;
-				break;
-			}
+			const newInputValue = beforeText + replacementText + afterText;
+			setInputValue(newInputValue);
 
-			case "fileName": {
-				const fileData = suggestion.data as TFile;
-				replacementText = `[[${fileData.basename}]]`;
-				newCursorPos = startPos + replacementText.length;
-				break;
-			}
-		}
-
-		const newInputValue = beforeText + replacementText + afterText;
-		setInputValue(newInputValue);
-
-		// Set cursor position after React updates
-		setTimeout(() => {
-			if (textareaRef.current) {
-				textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
-				textareaRef.current.focus();
-			}
-		}, 0);
-	}, [inputValue]);
+			// Set cursor position after React updates
+			setTimeout(() => {
+				if (textareaRef.current) {
+					textareaRef.current.setSelectionRange(
+						newCursorPos,
+						newCursorPos
+					);
+					textareaRef.current.focus();
+				}
+			}, 0);
+		},
+		[inputValue]
+	);
 
 	// Initialize suggestions hook
 	const suggestions = useSuggestions({
@@ -120,15 +133,23 @@ const ChatControl: React.FC<ChatControlProps> = ({
 				textareaRef.current.style.overflowY = "hidden";
 			}
 
-			const minHeightPx = parseFloat(INITIAL_TEXTAREA_HEIGHT) * 16;
-			if (newHeight < minHeightPx) {
-				newHeight = minHeightPx;
+			if (newHeight < MIN_TEXTAREA_HEIGHT) {
+				newHeight = MIN_TEXTAREA_HEIGHT;
 			}
 
-			setTextareaHeight(`${newHeight}px`);
 			textareaRef.current.style.height = `${newHeight}px`;
 		}
 	}, [inputValue]);
+
+	// Set proper initial height on mount
+	useEffect(() => {
+		if (textareaRef.current) {
+			// Force the minimum height initially instead of reading scrollHeight
+			const initialHeight = MIN_TEXTAREA_HEIGHT;
+			textareaRef.current.style.height = `${initialHeight}px`;
+			textareaRef.current.style.overflowY = "hidden";
+		}
+	}, []);
 
 	// Handle input changes and analyze for suggestions
 	const handleInputChange = (
@@ -167,7 +188,7 @@ const ChatControl: React.FC<ChatControlProps> = ({
 
 	const handleSend = () => {
 		if (inputValue.trim()) {
-			onSendMessage(inputValue.trim(), chatMode, ragMode !== 'none');
+			onSendMessage(inputValue.trim(), chatMode, ragMode !== "none");
 			setInputValue("");
 			suggestions.hideSuggestions();
 		}
@@ -213,16 +234,28 @@ const ChatControl: React.FC<ChatControlProps> = ({
 	};
 
 	const ragModeOptions = [
-		{ value: "vault", label: "Agent", icon: <FileText className="mr-2 h-4 w-4" /> },
-		{ value: "none", label: "Ask", icon: <Link className="mr-2 h-4 w-4" /> },
+		{
+			value: "vault",
+			label: "Agent",
+			icon: <FileText className="mr-2 h-4 w-4" />,
+		},
+		{
+			value: "none",
+			label: "Ask",
+			icon: <Link className="mr-2 h-4 w-4" />,
+		},
 	];
 
 	return (
-		<div ref={containerRef} className="bg-secondary text-secondary-foreground p-3 border border-border rounded-lg shadow-sm">
+		<div
+			ref={containerRef}
+			className="bg-base-20 text-secondary-foreground p-3 border border-border rounded-lg shadow-sm"
+			style={{ borderColor: "var(--background-modifier-border)" }}
+		>
 			{/* Text area with suggestions */}
-			<div className="mb-3 relative">
+			<div className="mb-1 relative">
 				<Textarea
-					className="w-full resize-none overflow-hidden shadow-none bg-transparent text-foreground focus-visible:ring-0 focus-visible:ring-offset-0 border-0 pt-2 pb-0"
+					className="w-full resize-none overflow-hidden shadow-none bg-transparent text-foreground focus-visible:ring-0 focus-visible:ring-offset-0 border-0 py-0 text-sm"
 					ref={textareaRef}
 					value={inputValue}
 					onChange={handleInputChange}
@@ -234,10 +267,6 @@ const ChatControl: React.FC<ChatControlProps> = ({
 							? "Describe task for agent..."
 							: "Start chatting... Try typing 'created' or '[['..."
 					}
-					style={{
-						height: textareaHeight,
-						minHeight: INITIAL_TEXTAREA_HEIGHT,
-					}}
 					rows={1}
 					disabled={isSending}
 				/>
@@ -256,13 +285,21 @@ const ChatControl: React.FC<ChatControlProps> = ({
 			<div className="flex items-center justify-between">
 				{/* Left side: tools */}
 				<div className="left-panel flex justify-start items-center space-x-2">
-					<Select value={ragMode} onValueChange={handleRagModeChange} disabled={isSending}>
-						<SelectTrigger className="h-8 w-auto text-xs !shadow-none border-none bg-background text-foreground focus:ring-0 focus-visible:ring-0 focus:outline-none focus-visible:outline-none">
+					<Select
+						value={ragMode}
+						onValueChange={handleRagModeChange}
+						disabled={isSending}
+					>
+						<SelectTrigger className="h-8 w-auto !shadow-none border-none bg-background text-foreground focus:ring-0 focus-visible:ring-0 focus:outline-none focus-visible:outline-none">
 							<SelectValue placeholder="Mode" />
 						</SelectTrigger>
-						<SelectContent className="text-xs bg-popover text-popover-foreground border border-border">
-							{ragModeOptions.map(option => (
-								<SelectItem key={option.value} value={option.value} className="text-xs hover:bg-muted hover:text-foreground">
+						<SelectContent className="bg-popover text-popover-foreground border border-border">
+							{ragModeOptions.map((option) => (
+								<SelectItem
+									key={option.value}
+									value={option.value}
+									className="text-sm hover:bg-muted hover:text-foreground"
+								>
 									<div className="flex items-center">
 										{option.icon}
 										{option.label}
