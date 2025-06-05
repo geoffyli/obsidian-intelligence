@@ -8,11 +8,11 @@ interface ChatHeaderProps {
 	isProcessing?: boolean;
 }
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({
+function ChatHeader({
 	onClearChat,
 	onOpenSettings,
 	isProcessing = false,
-}) => {
+}: ChatHeaderProps) {
 	return (
 		<div className="flex items-center justify-between border-b border-border bg-background">
 			{/* Left side - Title */}
@@ -45,6 +45,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 			</div>
 		</div>
 	);
-};
+}
 
 export default ChatHeader;

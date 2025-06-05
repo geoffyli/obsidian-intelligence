@@ -14,11 +14,11 @@ interface MessageRendererProps {
 	plugin: IntelligencePlugin;
 }
 
-const MessageRenderer: React.FC<MessageRendererProps> = ({
+function MessageRenderer({
 	message,
 	app,
 	plugin,
-}) => {
+}: MessageRendererProps) {
 	const messageRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -78,7 +78,7 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({
 	}, [message.text, app, plugin]);
 
 	return <div ref={messageRef} className="markdown-rendered-content" />;
-};
+}
 
 interface ChatMessagesProps {
 	messages: DisplayMessage[];
@@ -87,12 +87,12 @@ interface ChatMessagesProps {
 	isThinking?: boolean;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({
+function ChatMessages({
 	messages,
 	app,
 	plugin,
 	isThinking = false,
-}) => {
+}: ChatMessagesProps) {
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
 
 	// Scroll to bottom when new messages are added
@@ -163,6 +163,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 			</div>
 		</div>
 	);
-};
+}
 
 export { ChatMessages, type DisplayMessage };

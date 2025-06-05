@@ -37,12 +37,12 @@ const MAX_TEXTAREA_HEIGHT_LINES = 7;
 const LINE_HEIGHT = 1.2 * 16;
 const MIN_TEXTAREA_HEIGHT = 35; // px - single line: 14px text + 8px top padding + 8px line spacing
 
-const ChatControl: React.FC<ChatControlProps> = ({
+function ChatControl({
 	onSendMessage,
 	isSending,
 	onOpenSettings,
 	app,
-}) => {
+}: ChatControlProps) {
 	const [inputValue, setInputValue] = useState("");
 	const [chatMode] = useState<"agent" | "chat">("chat");
 	const [ragMode, setRagMode] = useState<RagMode>("vault");
@@ -152,9 +152,7 @@ const ChatControl: React.FC<ChatControlProps> = ({
 	}, []);
 
 	// Handle input changes and analyze for suggestions
-	const handleInputChange = (
-		event: React.ChangeEvent<HTMLTextAreaElement>
-	) => {
+	const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const newValue = event.target.value;
 		setInputValue(newValue);
 
@@ -340,6 +338,6 @@ const ChatControl: React.FC<ChatControlProps> = ({
 			</div>
 		</div>
 	);
-};
+}
 
 export default ChatControl;

@@ -16,10 +16,7 @@ interface ChatViewProps {
 	app: App;
 }
 
-const ChatView: React.FC<ChatViewProps> = ({
-	plugin,
-	app,
-}) => {
+function ChatView({ plugin, app }: ChatViewProps) {
 	const [chatHistory, setChatHistory] = useState<LangChainChatMessage[]>([]);
 	const [uiMessages, setUiMessages] = useState<DisplayMessage[]>([
 		{
@@ -78,8 +75,8 @@ const ChatView: React.FC<ChatViewProps> = ({
 
 	const handleSendMessage = useCallback(async (
 		rawInputText: string,
-		mode: "agent" | "chat",
-		ragEnabled: boolean
+		_mode: "agent" | "chat",
+		_ragEnabled: boolean
 	) => {
 		if (!rawInputText.trim()) return;
 
@@ -206,6 +203,6 @@ const ChatView: React.FC<ChatViewProps> = ({
 			</div>
 		</div>
 	);
-};
+}
 
 export default ChatView;

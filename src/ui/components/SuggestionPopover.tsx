@@ -19,14 +19,14 @@ interface SuggestionPopoverProps {
 	className?: string;
 }
 
-const SuggestionPopover: React.FC<SuggestionPopoverProps> = ({
+function SuggestionPopover({
 	suggestions,
 	activeSuggestionIndex,
 	onSelect,
 	onHover,
 	isVisible,
 	className,
-}) => {
+}: SuggestionPopoverProps) {
 	if (!isVisible || suggestions.length === 0) {
 		return null;
 	}
@@ -109,6 +109,6 @@ const SuggestionPopover: React.FC<SuggestionPopoverProps> = ({
 			))}
 		</div>
 	);
-};
+}
 
 export default SuggestionPopover;
