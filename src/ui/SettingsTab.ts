@@ -27,7 +27,7 @@ class SettingsTab extends PluginSettingTab {
 					.setValue(
 						this.plugin.settings.openAIApiKey || ""
 					).inputEl.type = "password";
-				text.onBlur(async () => {
+				text.inputEl.addEventListener("blur", async () => {
 					const trimmedKey = text.getValue().trim();
 					if (this.plugin.settings.openAIApiKey !== trimmedKey) {
 						this.plugin.settings.openAIApiKey = trimmedKey;
@@ -48,15 +48,15 @@ class SettingsTab extends PluginSettingTab {
 			.addText((text) => {
 				text.setPlaceholder("Enter your secret")
 					.setValue(this.plugin.settings.mySetting || "")
-					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
-						await this.plugin.saveSettings();
-					});
+					// .onChange(async (value) => {
+					// 	this.plugin.settings.mySetting = value;
+					// 	await this.plugin.saveSettings();
+					// });
 			});
 
 		containerEl.createEl("div", {
 			cls: "mt-6",
-			text: "These settings are saved automatically when you change them. The plugin will re-initialize with the new settings.",
+			text: "These settings are saved automatically when you change them. The plugin will reinitialize with the new settings.",
 		});
 	}
 }
