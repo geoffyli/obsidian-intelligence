@@ -168,4 +168,20 @@
 	.markdown-rendered-content blockquote:last-child {
 		margin-bottom: 0;
 	}
+
+	/* Message fade-in animation */
+	.message-fade-in {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
 }

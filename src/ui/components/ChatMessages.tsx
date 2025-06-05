@@ -98,8 +98,10 @@ function ChatMessages({
 	// Scroll to bottom when new messages are added
 	useEffect(() => {
 		if (messagesContainerRef.current) {
-			messagesContainerRef.current.scrollTop =
-				messagesContainerRef.current.scrollHeight;
+			messagesContainerRef.current.scrollTo({
+				top: messagesContainerRef.current.scrollHeight,
+				behavior: "smooth"
+			});
 		}
 	}, [messages]);
 
@@ -130,7 +132,7 @@ function ChatMessages({
 					<div
 						key={message.id}
 						className={cn(
-							"rounded-lg px-3 py-2",
+							"rounded-lg px-3 py-2 message-fade-in",
 							getMessageStyles(message.sender)
 						)}
 						style={{
@@ -150,7 +152,7 @@ function ChatMessages({
 
 				{isThinking && (
 					<div
-						className="p-4 text-center text-muted-foreground"
+						className="p-4 text-center text-muted-foreground message-fade-in"
 						role="status"
 						aria-live="assertive"
 					>

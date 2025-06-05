@@ -27,7 +27,7 @@ interface ChatControlProps {
 		ragEnabled: boolean
 	) => void;
 	isSending: boolean;
-	onOpenSettings?: () => void;
+	onOpenTools?: () => void;
 	app: App;
 }
 
@@ -40,7 +40,7 @@ const MIN_TEXTAREA_HEIGHT = 35; // px - single line: 14px text + 8px top padding
 function ChatControl({
 	onSendMessage,
 	isSending,
-	onOpenSettings,
+	onOpenTools,
 	app,
 }: ChatControlProps) {
 	const [inputValue, setInputValue] = useState("");
@@ -152,7 +152,9 @@ function ChatControl({
 	}, []);
 
 	// Handle input changes and analyze for suggestions
-	const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+	const handleInputChange = (
+		event: React.ChangeEvent<HTMLTextAreaElement>
+	) => {
 		const newValue = event.target.value;
 		setInputValue(newValue);
 
@@ -307,11 +309,11 @@ function ChatControl({
 						</SelectContent>
 					</Select>
 
-					{onOpenSettings && (
+					{onOpenTools && (
 						<Button
 							variant="ghost"
 							size="icon"
-							onClick={onOpenSettings}
+							onClick={onOpenTools}
 							className="h-8 w-8 !shadow-none hover:bg-muted hover:text-foreground"
 							title="Open settings"
 						>
@@ -326,7 +328,7 @@ function ChatControl({
 						type="button"
 						size="icon"
 						variant="ghost"
-						className="text-muted-foreground disabled:opacity-50 h-8 w-8 hover:bg-muted hover:text-foreground"
+						className="text-muted-foreground disabled:opacity-50 h-8 w-8 hover:bg-muted hover:text-foreground !shadow-none"
 						onClick={handleSend}
 						disabled={isSending || !inputValue.trim()}
 						aria-label="Send message"

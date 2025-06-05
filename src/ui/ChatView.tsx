@@ -1,7 +1,4 @@
-import React, {
-	useState,
-	useCallback,
-} from "react";
+import React, { useState, useCallback } from "react";
 import { App } from "obsidian";
 import IntelligencePlugin from "../main";
 import { LangChainChatMessage } from "../types";
@@ -64,96 +61,102 @@ function ChatView({ plugin, app }: ChatViewProps) {
 	]);
 	const [isThinking, setIsThinking] = useState(false);
 
-	const addMessageToDisplay = useCallback((message: { sender: "system" | "user" | "ai"; text: string }) => {
-		const newMessage: DisplayMessage = {
-			...message,
-			id: crypto.randomUUID(),
-			timestamp: new Date(),
-		};
-		setUiMessages((prev) => [...prev, newMessage]);
-	}, []);
+	const addMessageToDisplay = useCallback(
+		(message: { sender: "system" | "user" | "ai"; text: string }) => {
+			const newMessage: DisplayMessage = {
+				...message,
+				id: crypto.randomUUID(),
+				timestamp: new Date(),
+			};
+			setUiMessages((prev) => [...prev, newMessage]);
+		},
+		[]
+	);
 
-	const handleSendMessage = useCallback(async (
-		rawInputText: string,
-		_mode: "agent" | "chat",
-		_ragEnabled: boolean
-	) => {
-		if (!rawInputText.trim()) return;
-
-		const { semanticQuery, metadataFilters } =
-			parseFiltersFromPrompt(rawInputText);
-
-		addMessageToDisplay({ sender: "user", text: rawInputText });
-
-		if (semanticQuery) {
-			setChatHistory((prev) => [
-				...prev,
-				{ type: "human", content: semanticQuery },
-			]);
-		}
-
-		setIsThinking(true);
-
-		try {
-			if (!plugin.settings.openAIApiKey) {
-				addMessageToDisplay({
-					sender: "system",
-					text: "API Key not set. Please configure it in the plugin settings.",
-				});
-				return;
+	const handleSendMessage = useCallback(
+		async (
+			rawInputText: string,
+			_mode: "agent" | "chat",
+			_ragEnabled: boolean
+		) => {
+			if (!rawInputText.trim()) return;
+			// Step 1: Extract semantic query and metadata filters from the input text
+			const { semanticQuery, metadataFilters } =
+				parseFiltersFromPrompt(rawInputText);
+			// Step 2: Add the user message to the display
+			addMessageToDisplay({ sender: "user", text: rawInputText });
+			// Step 3: Update chat history with the user message
+			if (semanticQuery) {
+				setChatHistory((prev) => [
+					...prev,
+					{ type: "human", content: semanticQuery },
+				]);
 			}
-
-			if (
-				!plugin.intelligenceService ||
-				!plugin.intelligenceService.getIsInitialized()
-			) {
-				addMessageToDisplay({
-					sender: "system",
-					text: "Intelligence service not initialized. Please wait or try re-initializing from plugin settings.",
-				});
-				return;
-			}
-
-			const historyForChain = semanticQuery
-				? chatHistory.slice(0, -1)
-				: [...chatHistory];
-
-			const aiResponseText =
-				await plugin.intelligenceService.processQueryWithHistory(
-					semanticQuery,
-					historyForChain,
-					metadataFilters
-				);
-
-			if (aiResponseText) {
-				addMessageToDisplay({
-					sender: "ai",
-					text: aiResponseText,
-				});
-				if (semanticQuery) {
-					setChatHistory((prev) => [
-						...prev,
-						{ type: "ai", content: aiResponseText },
-					]);
+			// Step 4: Set thinking state to true
+			setIsThinking(true);
+			// Step 5: Process the query with the intelligence service
+			try {
+				if (!plugin.settings.openAIApiKey) {
+					addMessageToDisplay({
+						sender: "system",
+						text: "API Key not set. Please configure it in the plugin settings.",
+					});
+					return;
 				}
-			} else {
+
+				if (
+					!plugin.intelligenceService ||
+					!plugin.intelligenceService.getIsInitialized()
+				) {
+					addMessageToDisplay({
+						sender: "system",
+						text: "Intelligence service not initialized. Please wait or try re-initializing from plugin settings.",
+					});
+					return;
+				}
+
+				const historyForChain = semanticQuery
+					? chatHistory.slice(0, -1)
+					: [...chatHistory];
+
+				const aiResponseText =
+					await plugin.intelligenceService.processQueryWithHistory(
+						semanticQuery,
+						historyForChain,
+						metadataFilters
+					);
+
+				if (aiResponseText) {
+					addMessageToDisplay({
+						sender: "ai",
+						text: aiResponseText,
+					});
+					if (semanticQuery) {
+						setChatHistory((prev) => [
+							...prev,
+							{ type: "ai", content: aiResponseText },
+						]);
+					}
+				} else {
+					addMessageToDisplay({
+						sender: "system",
+						text: "No specific answer generated.",
+					});
+				}
+			} catch (error: unknown) {
+				console.error("Error processing query in ChatView:", error);
 				addMessageToDisplay({
 					sender: "system",
-					text: "No specific answer generated. If you used filters, please check if any notes matched your criteria.",
+					text: `An error occurred: ${
+						error instanceof Error ? error.message : "Unknown error"
+					}. Check the console for more details.`,
 				});
+			} finally {
+				setIsThinking(false);
 			}
-		} catch (error: unknown) {
-			console.error("Error processing query in ChatView:", error);
-			addMessageToDisplay({
-				sender: "system",
-				text: `An error occurred: ${
-					error instanceof Error ? error.message : "Unknown error"
-				}. Check the console for more details.`,
-			});
-		} finally {
-			setIsThinking(false);
-		}
-	}, [chatHistory, plugin, addMessageToDisplay]);
+		},
+		[chatHistory, plugin, addMessageToDisplay]
+	);
 
 	const handleClearChat = useCallback(() => {
 		setChatHistory([]);
@@ -167,9 +170,13 @@ function ChatView({ plugin, app }: ChatViewProps) {
 		]);
 	}, []);
 
-	const handleOpenSettings = useCallback(() => {
+	const handleOpenTools = useCallback(() => {
 		// Open plugin settings
 		// Note: This would typically be handled by opening the settings modal
+		console.log("Opening tools...");
+	}, []);
+	const handleOpenSettings = useCallback(() => {
+		// Open plugin settings
 		console.log("Opening settings...");
 	}, []);
 
@@ -196,7 +203,7 @@ function ChatView({ plugin, app }: ChatViewProps) {
 					<ChatControl
 						onSendMessage={handleSendMessage}
 						isSending={isThinking}
-						onOpenSettings={handleOpenSettings}
+						onOpenTools={handleOpenTools}
 						app={app}
 					/>
 				</div>
