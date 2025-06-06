@@ -268,7 +268,7 @@ function ChatControl({
 							: "Start chatting... Try typing 'created' or '[['..."
 					}
 					rows={1}
-					disabled={isSending}
+					// disabled={isSending}
 				/>
 
 				{/* Suggestion Popover */}

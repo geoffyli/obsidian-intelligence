@@ -3,6 +3,7 @@ import { MarkdownRenderer, App } from "obsidian";
 import IntelligencePlugin from "../../main";
 import { UIMessage } from "../../types";
 import { cn } from "@/lib/utils";
+import StatusMessage, { StatusState } from "./StatusMessage";
 
 interface DisplayMessage extends UIMessage {
 	id: string;
@@ -84,18 +85,18 @@ interface ChatMessagesProps {
 	messages: DisplayMessage[];
 	app: App;
 	plugin: IntelligencePlugin;
-	isThinking?: boolean;
+	statusState?: StatusState;
 }
 
 function ChatMessages({
 	messages,
 	app,
 	plugin,
-	isThinking = false,
+	statusState,
 }: ChatMessagesProps) {
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-	// Scroll to bottom when new messages are added
+	// Scroll to bottom when new messages are added or status changes
 	useEffect(() => {
 		if (messagesContainerRef.current) {
 			messagesContainerRef.current.scrollTo({
@@ -103,7 +104,7 @@ function ChatMessages({
 				behavior: "smooth"
 			});
 		}
-	}, [messages]);
+	}, [messages, statusState?.isVisible]);
 
 	const getMessageStyles = (sender: string) => {
 		switch (sender) {
@@ -149,18 +150,9 @@ function ChatMessages({
 						/>
 					</div>
 				))}
-
-				{isThinking && (
-					<div
-						className="p-4 text-center text-muted-foreground message-fade-in"
-						role="status"
-						aria-live="assertive"
-					>
-						<div className="flex items-center justify-center space-x-2">
-							<div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
-							<span>AI is thinking...</span>
-						</div>
-					</div>
+				{/* Render the status message if statusState is truthy */}
+				{statusState && (
+					<StatusMessage statusState={statusState} />
 				)}
 			</div>
 		</div>

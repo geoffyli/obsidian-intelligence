@@ -7,6 +7,7 @@ import { parseFiltersFromPrompt } from "../parser";
 import ChatHeader from "./components/ChatHeader";
 import { ChatMessages, DisplayMessage } from "./components/ChatMessages";
 import ChatControl from "./components/ChatControl";
+import { StatusState, AgentStatus } from "./components/StatusMessage";
 
 interface ChatViewProps {
 	plugin: IntelligencePlugin;
@@ -59,7 +60,20 @@ function ChatView({ plugin, app }: ChatViewProps) {
 			timestamp: new Date(Date.now() - 30000), // 30 seconds ago
 		},
 	]);
-	const [isThinking, setIsThinking] = useState(false);
+	// The original status state
+	const [statusState, setStatusState] = useState<StatusState>({
+		status: 'idle',
+		message: '',
+		isVisible: false
+	});
+
+	const setStatus = useCallback((status: AgentStatus, message: string, isVisible = true) => {
+		setStatusState({ status, message, isVisible });
+	}, []);
+
+	const clearStatus = useCallback(() => {
+		setStatusState({ status: 'idle', message: '', isVisible: false });
+	}, []);
 
 	const addMessageToDisplay = useCallback(
 		(message: { sender: "system" | "user" | "ai"; text: string }) => {
@@ -92,11 +106,12 @@ function ChatView({ plugin, app }: ChatViewProps) {
 					{ type: "human", content: semanticQuery },
 				]);
 			}
-			// Step 4: Set thinking state to true
-			setIsThinking(true);
+			// Step 4: Set status to thinking
+			setStatus('thinking', 'AI is thinking...');
 			// Step 5: Process the query with the intelligence service
 			try {
 				if (!plugin.settings.openAIApiKey) {
+					clearStatus();
 					addMessageToDisplay({
 						sender: "system",
 						text: "API Key not set. Please configure it in the plugin settings.",
@@ -108,6 +123,7 @@ function ChatView({ plugin, app }: ChatViewProps) {
 					!plugin.intelligenceService ||
 					!plugin.intelligenceService.getIsInitialized()
 				) {
+					clearStatus();
 					addMessageToDisplay({
 						sender: "system",
 						text: "Intelligence service not initialized. Please wait or try re-initializing from plugin settings.",
@@ -119,6 +135,9 @@ function ChatView({ plugin, app }: ChatViewProps) {
 					? chatHistory.slice(0, -1)
 					: [...chatHistory];
 
+				// Update status to generating
+				setStatus('generating', 'Generating response...');
+
 				const aiResponseText =
 					await plugin.intelligenceService.processQueryWithHistory(
 						semanticQuery,
@@ -127,6 +146,8 @@ function ChatView({ plugin, app }: ChatViewProps) {
 					);
 
 				if (aiResponseText) {
+					// Clear status before showing AI response
+					clearStatus();
 					addMessageToDisplay({
 						sender: "ai",
 						text: aiResponseText,
@@ -138,6 +159,7 @@ function ChatView({ plugin, app }: ChatViewProps) {
 						]);
 					}
 				} else {
+					clearStatus();
 					addMessageToDisplay({
 						sender: "system",
 						text: "No specific answer generated.",
@@ -145,21 +167,21 @@ function ChatView({ plugin, app }: ChatViewProps) {
 				}
 			} catch (error: unknown) {
 				console.error("Error processing query in ChatView:", error);
+				clearStatus();
 				addMessageToDisplay({
 					sender: "system",
 					text: `An error occurred: ${
 						error instanceof Error ? error.message : "Unknown error"
 					}. Check the console for more details.`,
 				});
-			} finally {
-				setIsThinking(false);
 			}
 		},
-		[chatHistory, plugin, addMessageToDisplay]
+		[chatHistory, plugin, addMessageToDisplay, setStatus, clearStatus]
 	);
 
 	const handleClearChat = useCallback(() => {
 		setChatHistory([]);
+		clearStatus();
 		setUiMessages([
 			{
 				id: crypto.randomUUID(),
@@ -168,7 +190,7 @@ function ChatView({ plugin, app }: ChatViewProps) {
 				timestamp: new Date(),
 			},
 		]);
-	}, []);
+	}, [clearStatus]);
 
 	const handleOpenTools = useCallback(() => {
 		// Open plugin settings
@@ -187,7 +209,7 @@ function ChatView({ plugin, app }: ChatViewProps) {
 				<ChatHeader
 					onClearChat={handleClearChat}
 					onOpenSettings={handleOpenSettings}
-					isProcessing={isThinking}
+					isProcessing={statusState.isVisible}
 				/>
 
 				{/* Messages */}
@@ -195,14 +217,14 @@ function ChatView({ plugin, app }: ChatViewProps) {
 					messages={uiMessages}
 					app={app}
 					plugin={plugin}
-					isThinking={isThinking}
+					statusState={statusState}
 				/>
 
 				{/* Chat Control */}
 				<div className="mt-2 border-t border-border bg-background">
 					<ChatControl
 						onSendMessage={handleSendMessage}
-						isSending={isThinking}
+						isSending={statusState.isVisible}
 						onOpenTools={handleOpenTools}
 						app={app}
 					/>
