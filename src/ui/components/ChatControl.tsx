@@ -290,15 +290,18 @@ function ChatControl({
 						onValueChange={handleRagModeChange}
 						disabled={isSending}
 					>
-						<SelectTrigger className="h-8 w-auto !shadow-none border-none bg-background text-foreground focus:ring-0 focus-visible:ring-0 focus:outline-none focus-visible:outline-none">
-							<SelectValue placeholder="Mode" />
+						<SelectTrigger className="h-8 w-auto !shadow-none border-none bg-transparent text-foreground hover:bg-base-40 dark:hover:bg-base-40 hover:text-accent-foreground focus:ring-0 focus-visible:ring-0 focus:outline-none focus-visible:outline-none !text-sm leading-tight py-0">
+							<SelectValue
+								placeholder="Mode"
+								className="!text-sm "
+							/>
 						</SelectTrigger>
 						<SelectContent className="bg-popover text-popover-foreground border border-border">
 							{ragModeOptions.map((option) => (
 								<SelectItem
 									key={option.value}
 									value={option.value}
-									className="text-sm hover:bg-muted hover:text-foreground"
+									className="text-sm hover:bg-muted"
 								>
 									<div className="flex items-center">
 										{option.icon}
@@ -314,7 +317,7 @@ function ChatControl({
 							variant="ghost"
 							size="icon"
 							onClick={onOpenTools}
-							className="h-8 w-8 !shadow-none hover:bg-muted hover:text-foreground"
+							className="h-8 w-8 !shadow-none bg-transparent hover:bg-base-40 dark:hover:bg-base-40"
 							title="Open settings"
 						>
 							<Settings2 className="h-4 w-4" />
@@ -328,7 +331,7 @@ function ChatControl({
 						type="button"
 						size="icon"
 						variant="ghost"
-						className="text-muted-foreground disabled:opacity-50 h-8 w-8 hover:bg-muted hover:text-foreground !shadow-none"
+						className="text-muted-foreground disabled:opacity-50 h-8 w-8 bg-transparent hover:bg-base-40 dark:hover:bg-base-40 !shadow-none"
 						onClick={handleSend}
 						disabled={isSending || !inputValue.trim()}
 						aria-label="Send message"
