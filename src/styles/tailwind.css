@@ -48,6 +48,24 @@
 		line-height: 1.5;
 	}
 
+	/* Text selection support */
+	.selectable-text {
+		user-select: text;
+		-webkit-user-select: text;
+		-moz-user-select: text;
+		-ms-user-select: text;
+	}
+
+	.selectable-text::selection {
+		background-color: var(--text-selection);
+		color: var(--text-on-accent);
+	}
+
+	.selectable-text::-moz-selection {
+		background-color: var(--text-selection);
+		color: var(--text-on-accent);
+	}
+
 	.markdown-rendered-content h1,
 	.markdown-rendered-content h2,
 	.markdown-rendered-content h3,

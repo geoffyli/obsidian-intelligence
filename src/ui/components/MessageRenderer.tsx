@@ -46,6 +46,12 @@ function MessageRenderer({
 				}
 
 				const clickHandler = (e: Event) => {
+					// Don't navigate if user is selecting text
+					const selection = window.getSelection();
+					if (selection && selection.toString().length > 0) {
+						return;
+					}
+					
 					e.preventDefault();
 					const href =
 						anchor.dataset.href || anchor.getAttribute("href");
@@ -78,7 +84,7 @@ function MessageRenderer({
 		return () => {};
 	}, [message.text, app, plugin]);
 
-	return <div ref={messageRef} className="markdown-rendered-content" />;
+	return <div ref={messageRef} className="markdown-rendered-content selectable-text" />;
 }
 
 export { MessageRenderer, type DisplayMessage };
