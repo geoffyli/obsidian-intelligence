@@ -4,6 +4,7 @@ import IntelligencePlugin from "../../main";
 import { UIMessage } from "../../types";
 import { cn } from "@/lib/utils";
 import StatusMessage, { StatusState } from "./StatusMessage";
+import MessageOperations from "./MessageOperations";
 
 interface DisplayMessage extends UIMessage {
 	id: string;
@@ -76,6 +77,8 @@ function MessageRenderer({
 				});
 			};
 		}
+		// Return empty cleanup function if messageRef.current is falsy
+		return () => {};
 	}, [message.text, app, plugin]);
 
 	return <div ref={messageRef} className="markdown-rendered-content" />;
@@ -109,9 +112,9 @@ function ChatMessages({
 	const getMessageStyles = (sender: string) => {
 		switch (sender) {
 			case "user":
-				return "max-w-[85%] md:max-w-[75%] ml-auto w-fit bg-primary text-primary-foreground rounded-lg shadow-sm";
+				return "max-w-[85%] md:max-w-[75%] ml-auto w-fit bg-primary text-primary-foreground rounded-lg shadow-none";
 			case "ai":
-				return "max-w-[85%] md:max-w-[75%] mr-auto w-fit bg-base-30 text-secondary-foreground border border-border rounded-lg shadow-sm";
+				return "max-w-[85%] md:max-w-[75%] mr-auto w-fit bg-base-20 text-secondary-foreground border border-border rounded-lg shadow-none";
 			case "system":
 				return "mx-auto max-w-[90%] w-fit bg-muted text-muted-foreground border border-border text-center rounded-md";
 			default:
@@ -133,21 +136,33 @@ function ChatMessages({
 					<div
 						key={message.id}
 						className={cn(
-							"rounded-lg px-3 py-2 message-fade-in",
+							"group", // Add group class for hover effects
 							getMessageStyles(message.sender)
 						)}
-						style={{
-							backgroundColor: message.sender === 'user' 
-								? 'var(--interactive-accent)' 
-								: 'var(--background-modifier-hover)',
-							borderColor: message.sender !== 'user' ? 'var(--background-modifier-border)' : undefined
-						}}
 					>
-						<MessageRenderer
-							message={message}
-							app={app}
-							plugin={plugin}
-						/>
+						<div
+							className={cn(
+								"rounded-lg px-3 py-2 message-fade-in"
+							)}
+							style={{
+								backgroundColor: message.sender === 'user' 
+									? 'var(--interactive-accent)' 
+									: 'var(--background-modifier-hover)',
+								borderColor: message.sender !== 'user' ? 'var(--background-modifier-border)' : undefined
+							}}
+						>
+							<MessageRenderer
+								message={message}
+								app={app}
+								plugin={plugin}
+							/>
+						</div>
+						{/* Only render Message Operations under the AI message */}
+						{message.sender === "ai" && (
+							<MessageOperations message={message} />
+						)}
+						{/* Render operations for user messages */}
+						{/* <MessageOperations message={message} /> */}
 					</div>
 				))}
 				{/* Render the status message if statusState is truthy */}

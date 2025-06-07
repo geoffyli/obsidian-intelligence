@@ -63,3 +63,5 @@ CLAUDE.md
 # Sync script (local development only)
 sync-plugin.sh
 .hotreload
+
+docs/** 
