@@ -6,7 +6,7 @@ import {
 } from "./constants";
 import { DEFAULT_SETTINGS } from "./types";
 import type { IntelligencePluginSettings } from "./types";
-import { IntelligenceService } from "./intelligenceService";
+import { MastraIntelligenceService } from "./mastra/mastraIntelligenceService";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ItemView } from "obsidian";
@@ -16,9 +16,8 @@ import { Providers } from "./state/contexts";
 import SettingsTab from "./ui/SettingsTab";
 
 export default class IntelligencePlugin extends Plugin {
-	// Fix: Add definite assignment assertions to class properties
 	settings!: IntelligencePluginSettings;
-	intelligenceService!: IntelligenceService;
+	intelligenceService!: MastraIntelligenceService;
 	private statusBarItemEl: HTMLElement | null = null;
 
 	async onload() {
@@ -48,31 +47,54 @@ export default class IntelligencePlugin extends Plugin {
 				COMMAND_NAMES["reindex-vault-intelligence"] ||
 				"Reinitialize Intelligence (Reindex Vault)",
 			callback: async () => {
-				if (!this.settings.openAIApiKey) {
-					new Notice(
-						"OpenAI API Key is not set. Please configure it in the plugin settings."
-					);
-					return;
-				}
-				// Status bar update is handled within reInitialize
+				// Multi-agent system uses local embeddings, no API key required
 				await this.intelligenceService.reInitialize();
 			},
 		});
 
-		// Initialize Inteliigence Service
-		this.intelligenceService = new IntelligenceService(
-			this.app,
-			this.settings
-		);
-		this.intelligenceService.setPlugin(this); // Pass plugin instance to IntelligenceService for status bar updates
+		// Command to enable auto-approval for file operations
+		this.addCommand({
+			id: "enable-auto-approval",
+			name: "Enable Auto-Approval for File Operations",
+			callback: () => {
+				this.intelligenceService.setAutoApproval(true);
+			},
+		});
 
-		// You might want to make this user-triggered or lazy-loaded
-		// if initialization is time-consuming or depends on user actions.
+		// Command to disable auto-approval for file operations
+		this.addCommand({
+			id: "disable-auto-approval",
+			name: "Disable Auto-Approval for File Operations",
+			callback: () => {
+				this.intelligenceService.setAutoApproval(false);
+			},
+		});
+
+		// Command to show system status
+		this.addCommand({
+			id: "show-system-status",
+			name: "Show Intelligence System Status",
+			callback: () => {
+				const status = this.intelligenceService.getSystemStatus();
+				console.log("Intelligence System Status:", status);
+				new Notice(
+					`System Status: ${
+						status.initialized ? "Ready" : "Not Ready"
+					} - Check console for details`
+				);
+			},
+		});
+
+		// Initialize Mastra Intelligence Service
+		this.intelligenceService = new MastraIntelligenceService(
+			this.app,
+			this.settings,
+			this
+		);
 		this.updateStatusBar("Intelligence: Initializing...");
 		await this.intelligenceService.initialize();
 
 		// Update Ribbon Icon to open the Chat View
-		// Fix: Remove unused parameter 'evt' in addRibbonIcon callback
 		this.addRibbonIcon("messages-square", "Open Intelligence Chat", () => {
 			this.activateChatView();
 		}).addClass("my-plugin-ribbon-class");
@@ -83,7 +105,6 @@ export default class IntelligencePlugin extends Plugin {
 
 		// In onload(), register the settings tab using the new SettingsTab class
 		this.addSettingTab(new SettingsTab(this.app, this));
-
 		//debugging: Activate the chat view on load
 		await this.activateChatView(); // Uncomment to auto-open chat view on plugin load
 	}

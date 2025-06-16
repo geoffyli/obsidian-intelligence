@@ -6,7 +6,7 @@
  */
 export interface IntelligencePluginSettings {
 	mySetting: string; // Existing setting
-	openAIApiKey: string; // New setting for OpenAI API Key
+	openAIApiKey: string; // OpenAI API Key (required)
 }
 
 /**
@@ -58,7 +58,10 @@ export type MetadataCondition =
 
 export interface MetadataFilter {
 	// id: string;
-	field: MetadataField;
-	condition: MetadataCondition;
+	field?: MetadataField;
+	condition?: MetadataCondition;
 	value: string;
+	// New properties for MastraVectorStore compatibility
+	key: string;
+	operator: 'equals' | 'contains' | 'startsWith' | 'in' | 'gt' | 'lt' | 'gte' | 'lte';
 }

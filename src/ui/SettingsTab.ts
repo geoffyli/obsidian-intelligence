@@ -32,12 +32,23 @@ class SettingsTab extends PluginSettingTab {
 					if (this.plugin.settings.openAIApiKey !== trimmedKey) {
 						this.plugin.settings.openAIApiKey = trimmedKey;
 						new Notice(
-							"OpenAI API Key updated. Saving settings..."
+							"OpenAI API Key updated. Reinitializing system..."
 						);
 						await this.plugin.saveSettings();
+						
+						// Reinitialize the system with new API key
+						if (this.plugin.intelligenceService) {
+							await this.plugin.intelligenceService.reInitialize();
+						}
 					}
 				});
 			});
+
+		// Info about embedding method
+		containerEl.createEl("div", {
+			cls: "setting-item-description",
+			text: "This plugin uses OpenAI's text-embedding-3-small model for fast, high-quality semantic search. An OpenAI API key is required.",
+		});
 
 		// My Original Setting
 		new Setting(containerEl)

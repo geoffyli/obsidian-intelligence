@@ -73,10 +73,15 @@ async function run() {
 		jsxImportSource: "react",
 		// Plugins
 		plugins: [cssPlugin],
-		// Define for process.env replacements
+		// Define for process.env replacements and browser compatibility
 		define: {
-			"process.env.NODE_ENV": JSON.stringify(prod ? "production" : "development"),
+			"process.env.NODE_ENV": JSON.stringify(
+				prod ? "production" : "development"
+			),
+			global: "globalThis",
+			"process.versions.node": "undefined",
 		},
+		platform: "node", // Ensure Node.js built-ins are resolved
 	});
 
 	if (prod) {
