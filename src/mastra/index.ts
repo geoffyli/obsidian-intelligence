@@ -1,22 +1,4 @@
 import { Mastra } from "@mastra/core";
-import { ObsidianVectorStore } from "./storage/ObsidianVectorStore";
-import { App } from "obsidian";
-
-// --- Mastra Orchestrator Setup ---
-// Using simple Mastra setup without complex storage (for now)
-export function createMastraInstance(app: App, dataDir: string = ".obsidian/plugins/obsidian-intelligence/data") {
-	const vectorStore = new ObsidianVectorStore(app, {
-		dataDir,
-		fileName: "vectors.json",
-		dimensions: 1536, // OpenAI embedding dimensions
-	});
-
-	// Create basic Mastra instance without complex storage for now
-	const mastra = new Mastra({});
-
-	return { mastra, vectorStore };
-}
-
 // Export the factory function instead of instances
 export { ObsidianMemoryStore } from "./storage/ObsidianMemoryStore";
 export { ObsidianVectorStore } from "./storage/ObsidianVectorStore";
@@ -370,7 +352,13 @@ function createSafetyAgent(toolsImplementation: ObsidianToolsImplementation, ope
 	});
 }
 
-// Helper to create a Mastra instance with agents and memory integration
+/**
+ * Creates and initializes the Mastra intelligence system with agents and tools.
+ * This function sets up the Mastra orchestrator with agents, initializes the vector store,
+ * and prepares the system for processing queries.
+ * @param param0 
+ * @returns 
+ */
 export async function createMastraWithAgents({
 	app,
 	settings,
@@ -400,7 +388,6 @@ export async function createMastraWithAgents({
 	}
 
 	// Set the API key as an environment variable for the AI SDK
-	// This is a workaround for the AI SDK not properly receiving the apiKey parameter
 	if (typeof process !== 'undefined' && process.env) {
 		process.env.OPENAI_API_KEY = settings.openAIApiKey;
 		console.log("Set OPENAI_API_KEY environment variable");
@@ -478,32 +465,16 @@ export async function createMastraWithAgents({
 		agents,
 	});
 
-	// Return orchestrator wrapper instead of raw Mastra instance
-	return new MastraOrchestrator(mastra, {
+	// Create orchestrator wrapper
+	const orchestrator = new MastraOrchestrator(mastra, {
 		app,
 		settings,
 		plugin,
 		dataDir,
 	});
+	
+	// Setup the controller agent with tools implementation
+	orchestrator.setupControllerAgent(toolsImplementation);
+	
+	return orchestrator;
 }
-
-/**
- * Usage example for full agent/memory integration:
- *
- * import { createMastraInstance, createMastraWithAgents } from "./mastra";
- * import { App } from "obsidian";
- * import { MastraVectorStore } from "./mastra/agents/vectorstore/MastraVectorStore";
- *
- * // Create basic Mastra instance
- * const { mastra, memoryStore, vectorStore } = createMastraInstance(app);
- *
- * // Create your MastraVectorStore wrapper instance as needed
- * const myVectorStore = new MastraVectorStore({ ... });
- *
- * // Create a fully integrated Mastra instance with agents
- * const mastraWithAgents = createMastraWithAgents({
- *   app,
- *   vectorStore: myVectorStore, // Your wrapper for agent/tool wiring
- *   // Optionally pass memoryConfig, safetyConfig, and dataDir
- * });
- */

@@ -28,6 +28,12 @@ export class MastraIntelligenceService {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Creates and initializes the Mastra intelligence system.
+	 * This method sets up the Mastra orchestrator with agents and tools,
+	 * and prepares the system for processing queries.
+	 * @returns Promise<void>
+	 */
 	async initialize(): Promise<void> {
 		if (this.isInitializing || this.isInitialized) return;
 		this.isInitializing = true;

@@ -58,40 +58,40 @@ export class OpenAIEmbeddingManager implements EmbeddingModel {
 		}
 
 		// Test the API key with a simple embedding request
-		// try {
-		//   const processedText = this.preprocessText('test');
+		try {
+			const processedText = this.preprocessText('test');
 
-		//   const response = await fetch(this.baseUrl, {
-		//     method: 'POST',
-		//     headers: {
-		//       'Authorization': `Bearer ${this.apiKey}`,
-		//       'Content-Type': 'application/json',
-		//     },
-		//     body: JSON.stringify({
-		//       model: this.name,
-		//       input: processedText,
-		//       encoding_format: 'float',
-		//     }),
-		//   });
+			const response = await fetch(this.baseUrl, {
+				method: 'POST',
+				headers: {
+					'Authorization': `Bearer ${this.apiKey}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					model: this.name,
+					input: processedText,
+					encoding_format: 'float',
+				}),
+			});
 
-		//   if (!response.ok) {
-		//     const errorData = await response.json().catch(() => ({}));
-		//     throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
-		//   }
+			if (!response.ok) {
+				const errorData = await response.json().catch(() => ({}));
+				throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+			}
 
-		//   const data: OpenAIEmbeddingResponse = await response.json();
+			const data: OpenAIEmbeddingResponse = await response.json();
 
-		//   if (!data.data || data.data.length === 0) {
-		//     throw new Error('No embedding data received from OpenAI API');
-		//   }
+			if (!data.data || data.data.length === 0) {
+				throw new Error('No embedding data received from OpenAI API');
+			}
 
-		//   this.isInitialized = true;
-		//   console.log('OpenAI embedding manager initialized successfully');
-		// } catch (error) {
-		//   const errorMsg = error instanceof Error ? error.message : String(error);
-		//   console.error('Failed to initialize OpenAI embedding manager:', errorMsg);
-		//   throw new Error(`OpenAI API key validation failed: ${errorMsg}`);
-		// }
+			this.isInitialized = true;
+			console.log('OpenAI embedding manager initialized successfully');
+		} catch (error) {
+			const errorMsg = error instanceof Error ? error.message : String(error);
+			console.error('Failed to initialize OpenAI embedding manager:', errorMsg);
+			throw new Error(`OpenAI API key validation failed: ${errorMsg}`);
+		}
 	}
 
 	/**

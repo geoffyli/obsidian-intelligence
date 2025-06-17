@@ -1,7 +1,7 @@
 // Mastra-native vector store for Obsidian Intelligence
 import { ObsidianVectorStore } from "../../storage/ObsidianVectorStore";
 import { App, TFile } from "obsidian";
-import { OpenAIEmbeddingManager } from "../../../embeddings/OpenAIEmbeddingManager";
+import { OpenAIEmbeddingManager } from "../../embeddings/OpenAIEmbeddingManager";
 import { VectorSearchOptions } from "../types";
 
 export interface MastraVectorStoreConfig {
@@ -56,6 +56,12 @@ export class MastraVectorStore {
 		this.app = app;
 
 		try {
+			// Initialize the embedding manager first
+			if (!this.embeddingManager.isReady()) {
+				console.log("Initializing embedding manager...");
+				await this.embeddingManager.initialize();
+			}
+
 			// Initialize the vector store
 			await this.vectorStore.initialize();
 
